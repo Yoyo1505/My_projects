@@ -1,4 +1,4 @@
-﻿# Dashboard Vista Territorio — Tableros y alertas con IA
+# Dashboard Territory Dashboard — Tableros y alertas con IA
 
 Dashboard financiero en **Streamlit** con **tableros interactivos**, drill-down territorial/contable y **alertas asistidas por IA** (riesgos, oportunidades y señales de seguimiento).
 
@@ -26,7 +26,7 @@ Dashboard financiero en **Streamlit** con **tableros interactivos**, drill-down 
 ## Inicio rápido
 
 ```powershell
-cd Vista Territorio
+cd Territory Dashboard
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
