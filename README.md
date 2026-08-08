@@ -1,4 +1,4 @@
-# My Projects – Data Analysis, Finance, AI Dashboards & RAG
+﻿# My Projects – Data Analysis, Finance, AI Dashboards & RAG
 
 Portafolio de proyectos en Python: análisis de datos, riesgo financiero, modelado cuantitativo, **tableros con alertas IA** y sistemas **RAG**.
 
@@ -6,26 +6,26 @@ Portafolio de proyectos en Python: análisis de datos, riesgo financiero, modela
 
 | Proyecto | Tipo | Descripción |
 |----------|------|-------------|
-| **[cashi_rag](cashi_rag/)** | Sistema **RAG** | Asistente financiero con recuperación aumentada: indexación local, consulta y API |
-| **[dashboard_vista_territorio](dashboard_vista_territorio/)** | **Tableros + alertas IA** | Dashboard Streamlit territorial/contable, ETL y alertas de riesgos/oportunidades |
-| **[financial_risk_analysis](financial_risk_analysis/)** | Riesgo | VaR, Monte Carlo, stress testing |
+| **[Cashi](Cashi/)** | Sistema **RAG** | Asistente financiero con recuperación aumentada: indexación local, consulta y API |
+| **[Vista Territorio](Vista%20Territorio/)** | **Tableros + alertas IA** | Dashboard Streamlit territorial/contable, ETL y alertas de riesgos/oportunidades |
+| **[Financial Risk Analysis](Financial%20Risk%20Analysis/)** | Riesgo | VaR, Monte Carlo, stress testing |
 | **[Loan Assessment System](Loan%20Assessment%20System/)** | Crédito | Análisis de aprobación de préstamos |
 | **[Leverage Buyout Model](Leverage%20Buyout%20Model/)** | Corporate finance | Caso LBO |
-| **[quantum_computing](quantum_computing/)** | Experimental | Starters Qiskit / PennyLane |
+| **[Quantum Computing](Quantum%20Computing/)** | Experimental | Starters Qiskit / PennyLane |
 
-## Estructura del repositorio
+## Repository structure
 
-Cada carpeta es un proyecto independiente (README, código, dependencias).
+Each folder is an independent project (README, code, dependencies).
 
-**Datos y secretos no se suben a GitHub:** credenciales (`.env`), usuarios, parquets, catálogos grandes y zips de agregados se mantienen **fuera** del repo. Ver `DATA.md` y `.env.ejemplo` en cada proyecto que aplique.
+**Data and secrets are not committed:** credentials (`.env`), users, parquets, large catalogs and aggregate zips stay **outside** the repo. See each project’s `DATA.md` and `.env.ejemplo` when applicable.
 
-## Stack general
+## Stack
 
 - Python, pandas, numpy, polars, duckdb  
 - Streamlit, Plotly  
-- RAG local / asistentes  
+- Local RAG / assistants  
 - Jupyter, Git  
 
 ## About
 
-Portfolio orientado a roles de Data Analysis, Analytics Engineering, Financial Risk y soluciones de IA aplicada a finanzas.
+Portfolio for Data Analysis, Analytics Engineering, Financial Risk, and AI applied to finance.

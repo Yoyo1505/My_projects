@@ -1,4 +1,4 @@
-# Cashi — Sistema RAG financiero
+﻿# Cashi — Sistema RAG financiero
 
 **Cashi** es un sistema de **RAG (Retrieval-Augmented Generation)** orientado a asistencia financiera: indexación local de contexto, consulta semántica y respuestas ancladas a documentos/datos del dominio, sin depender de hardcode de cifras en la capa de presentación.
 
@@ -19,7 +19,7 @@
 ## Estructura
 
 ```
-cashi_rag/
+Cashi/
 ├── rag/                    # Núcleo RAG
 │   ├── financial_rag.py
 │   ├── indexer.py
@@ -40,7 +40,7 @@ cashi_rag/
 ## Inicio rápido
 
 ```powershell
-cd cashi_rag
+cd Cashi
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
