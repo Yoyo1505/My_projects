@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Projects – Live Demos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: rgba(15, 23, 42, 0.9);
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --violet: #a78bfa;
+      --green: #34d399;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1000px 500px at 10% -10%, #1e293b 0%, transparent 50%),
+        radial-gradient(800px 400px at 90% 10%, rgba(167, 139, 250, 0.12), transparent 45%),
+        var(--bg);
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 20px 64px;
+    }
+    .kicker {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+    }
+    .lead { color: var(--muted); font-size: 1.05rem; max-width: 52ch; line-height: 1.55; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 36px;
+    }
+    a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: linear-gradient(160deg, rgba(30,41,59,.95), rgba(15,23,42,.98));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 22px 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    a.card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .badge.dash { background: rgba(56,189,248,.12); color: #7dd3fc; border: 1px solid rgba(56,189,248,.25); }
+    .badge.rag { background: rgba(167,139,250,.12); color: #c4b5fd; border: 1px solid rgba(167,139,250,.25); }
+    .card h2 { margin: 0 0 8px; font-size: 1.25rem; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 0.95rem; }
+    .card .go {
+      margin-top: 16px;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    footer {
+      margin-top: 48px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: #7dd3fc; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="kicker">GitHub Pages · Static demos</div>
+    <h1>My Projects – Live demos</h1>
+    <p class="lead">
+      Open these demos directly in the browser. No Python, no Streamlit, no local server required.
+      Data is synthetic and runs entirely client-side (HTML + JavaScript).
+    </p>
+
+    <div class="grid">
+      <a class="card" href="territory/index.html">
+        <span class="badge dash">Dashboard</span>
+        <h2>Territory Dashboard</h2>
+        <p>KPIs, charts, territorial hierarchy, cierres and quarter views — dark UI demo with synthetic finance data.</p>
+        <div class="go">Open demo →</div>
+      </a>
+      <a class="card" href="cashi/index.html">
+        <span class="badge rag">RAG</span>
+        <h2>Cashi RAG</h2>
+        <p>Client-side retrieval over project docs and code chunks. Ask a question and see ranked snippets.</p>
+        <div class="go">Open demo →</div>
+      </a>
+    </div>
+
+    <footer>
+      Source code:
+      <a href="https://github.com/Yoyo1505/My_projects" target="_blank" rel="noopener">github.com/Yoyo1505/My_projects</a>
+      · Full Python apps remain in the repo for offline / advanced use.
+    </footer>
+  </main>
+</body>
+</html>

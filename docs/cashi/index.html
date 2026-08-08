@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cashi RAG · Static Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: rgba(15, 23, 42, 0.92);
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #a78bfa;
+      --cyan: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 480px at 90% -10%, rgba(167,139,250,.18), transparent 50%),
+        radial-gradient(800px 400px at 0% 0%, #1e293b 0%, transparent 50%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 18px 48px; }
+    .back { color: #7dd3fc; text-decoration: none; font-size: .9rem; }
+    .kicker {
+      margin-top: 14px; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+      color: #c4b5fd; font-weight: 700;
+    }
+    h1 { margin: 8px 0 6px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    .lead { color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
+    .search {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px; margin-bottom: 14px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.3);
+    }
+    input[type="text"] {
+      flex: 1; min-width: 200px;
+      background: #0f172a; border: 1px solid var(--border); color: var(--text);
+      border-radius: 10px; padding: 12px 14px; font: inherit;
+    }
+    input:focus { outline: 1px solid rgba(167,139,250,.5); }
+    button {
+      background: linear-gradient(135deg, #a78bfa, #38bdf8);
+      border: none; color: #0f172a; font-weight: 700; font: inherit;
+      border-radius: 10px; padding: 12px 18px; cursor: pointer;
+    }
+    button:hover { filter: brightness(1.05); }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .examples button {
+      background: rgba(167,139,250,.12); color: #c4b5fd;
+      border: 1px solid rgba(167,139,250,.28); font-weight: 600; font-size: .82rem;
+      padding: 8px 12px;
+    }
+    .status { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+    .hit {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px; margin: 0 0 10px;
+    }
+    .hit h3 { margin: 0 0 6px; font-size: 1rem; color: #e2e8f0; }
+    .meta { font-size: .78rem; color: var(--muted); margin-bottom: 8px; }
+    .score {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      background: rgba(56,189,248,.12); color: #7dd3fc; font-weight: 700; font-size: .75rem;
+    }
+    pre {
+      margin: 0; white-space: pre-wrap; word-break: break-word;
+      background: #0b1220; border-radius: 10px; padding: 12px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: .8rem; color: #cbd5e1; max-height: 220px; overflow: auto;
+      border: 1px solid rgba(148,163,184,.1);
+    }
+    .empty { color: var(--muted); padding: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../index.html">← All demos</a>
+    <div class="kicker">Cashi · Local RAG</div>
+    <h1>◈ Cashi RAG</h1>
+    <p class="lead">
+      Client-side retrieval over project documentation and code. Runs entirely in your browser on GitHub Pages — no Python server.
+    </p>
+
+    <div class="search">
+      <input id="q" type="text" placeholder="Ask something… e.g. how does indexing work" value="how does indexing work" />
+      <button id="go">Search</button>
+    </div>
+    <div class="examples" id="examples"></div>
+    <div class="status" id="status">Loading index…</div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const EXAMPLES = [
+      "how does indexing work",
+      "what is Cashi",
+      "metrics glossary",
+      "how does the API work",
+      "Real Plan Forecast",
+    ];
+
+    let CHUNKS = [];
+
+    function tokenize(text) {
+      return (text || "")
+        .toLowerCase()
+        .match(/[a-z0-9_áéíóúñ]+/gi)
+        ?.filter((w) => w.length > 1) || [];
+    }
+
+    function search(query, topK = 5) {
+      const tokens = tokenize(query);
+      if (!tokens.length || !CHUNKS.length) return [];
+
+      // Document frequency
+      const df = {};
+      CHUNKS.forEach((ch) => {
+        const set = new Set(tokenize(ch.content + " " + ch.heading + " " + ch.file));
+        tokens.forEach((t) => {
+          if (set.has(t)) df[t] = (df[t] || 0) + 1;
+        });
+      });
+
+      const N = CHUNKS.length;
+      const scored = [];
+      CHUNKS.forEach((ch) => {
+        const words = tokenize(ch.content + " " + ch.heading + " " + ch.file);
+        if (!words.length) return;
+        const tf = {};
+        words.forEach((w) => { tf[w] = (tf[w] || 0) + 1; });
+        let score = 0;
+        tokens.forEach((t) => {
+          if (!tf[t]) return;
+          const idf = Math.log((N + 1) / ((df[t] || 0) + 0.5)) + 1;
+          score += (tf[t] / words.length) * idf;
+        });
+        if (score > 0) scored.push({ score, ch });
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      return scored.slice(0, topK);
+    }
+
+    function render(hits, query) {
+      const box = document.getElementById("results");
+      if (!hits.length) {
+        box.innerHTML = `<div class="empty">No matches for “${query}”.</div>`;
+        return;
+      }
+      box.innerHTML = hits
+        .map(({ score, ch }, i) => `
+          <article class="hit">
+            <h3>${i + 1}. ${escapeHtml(ch.heading || "Untitled")}</h3>
+            <div class="meta">
+              <span class="score">${score.toFixed(3)}</span>
+              · ${escapeHtml(ch.file || "")}
+              · ${escapeHtml(ch.type || "text")}
+              · L${ch.start_line || "?"}–${ch.end_line || "?"}
+            </div>
+            <pre>${escapeHtml((ch.content || "").slice(0, 900))}</pre>
+          </article>`)
+        .join("");
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function run() {
+      const q = document.getElementById("q").value.trim();
+      if (!q) return;
+      const hits = search(q, 6);
+      document.getElementById("status").textContent =
+        `${hits.length} result(s) · ${CHUNKS.length} chunks indexed · 100% client-side`;
+      render(hits, q);
+    }
+
+    document.getElementById("go").addEventListener("click", run);
+    document.getElementById("q").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") run();
+    });
+
+    const ex = document.getElementById("examples");
+    EXAMPLES.forEach((t) => {
+      const b = document.createElement("button");
+      b.textContent = t;
+      b.addEventListener("click", () => {
+        document.getElementById("q").value = t;
+        run();
+      });
+      ex.appendChild(b);
+    });
+
+    fetch("data/chunks.json")
+      .then((r) => {
+        if (!r.ok) throw new Error("chunks.json missing");
+        return r.json();
+      })
+      .then((data) => {
+        CHUNKS = data.chunks || [];
+        document.getElementById("status").textContent =
+          `Ready · ${CHUNKS.length} chunks · try a search`;
+        run();
+      })
+      .catch((e) => {
+        document.getElementById("status").textContent = "Failed to load data/chunks.json: " + e.message;
+      });
+  </script>
+</body>
+</html>

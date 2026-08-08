@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Territory Dashboard · Static Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #111827;
+      --card: rgba(15, 23, 42, 0.92);
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --rose: #fb7185;
+      --green: #34d399;
+      --violet: #a78bfa;
+      --amber: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1100px 560px at 8% -12%, #1e293b 0%, transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    header.hero {
+      margin: 18px 18px 12px;
+      padding: 22px 24px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(135deg, rgba(56,189,248,.14), rgba(167,139,250,.1) 50%, rgba(52,211,153,.08)),
+        linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.92));
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+    }
+    .kicker { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: #7dd3fc; font-weight: 700; }
+    h1 { margin: 6px 0 4px; font-size: clamp(1.4rem, 3vw, 1.85rem); }
+    .sub { color: var(--muted); margin: 0; font-size: .95rem; }
+    .badge {
+      display: inline-block; margin-top: 10px; padding: 4px 10px; border-radius: 999px;
+      font-size: .72rem; font-weight: 600; color: #6ee7b7;
+      background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.25);
+    }
+    .layout { display: grid; grid-template-columns: 240px 1fr; gap: 14px; padding: 0 18px 28px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+    aside {
+      background: linear-gradient(180deg, #111827, #0f172a);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      height: fit-content;
+    }
+    aside h3 { margin: 0 0 10px; font-size: .85rem; color: #7dd3fc; letter-spacing: .06em; text-transform: uppercase; }
+    .nav btn {
+      display: block; width: 100%; text-align: left; margin: 0 0 6px;
+      background: transparent; border: 1px solid transparent; color: var(--text);
+      border-radius: 10px; padding: 10px 12px; cursor: pointer; font: inherit;
+    }
+    .nav btn:hover { background: rgba(56,189,248,.08); }
+    .nav btn.active {
+      background: rgba(56,189,248,.14);
+      border-color: rgba(56,189,248,.35);
+      color: #7dd3fc;
+      font-weight: 600;
+    }
+    .back { display: inline-block; color: #7dd3fc; text-decoration: none; font-size: .85rem; margin-bottom: 12px; }
+    main.panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      min-height: 70vh;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .kpi {
+      border: 1px solid rgba(56,189,248,.18);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: linear-gradient(160deg, rgba(30,41,59,.95), rgba(15,23,42,.98));
+    }
+    .kpi .t { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: #7dd3fc; font-weight: 700; }
+    .kpi .v { font-family: "JetBrains Mono", monospace; font-size: 1.25rem; font-weight: 700; margin-top: 4px; }
+    .kpi .s { font-size: .8rem; margin-top: 6px; font-weight: 600; }
+    .s.up { color: var(--rose); }
+    .s.down { color: var(--green); }
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+    .chart-box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(2,6,23,.35);
+      min-height: 280px;
+    }
+    .chart-box h3 { margin: 0 0 8px; font-size: .95rem; color: #cbd5e1; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: .88rem;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 8px 10px; border-bottom: 1px solid rgba(148,163,184,.1);
+      text-align: right; font-variant-numeric: tabular-nums;
+    }
+    th { color: #7dd3fc; text-align: center; font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; }
+    th:first-child, td:first-child { text-align: left; }
+    tr:hover td { background: rgba(56,189,248,.06); }
+    details.row {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 6px 0;
+      background: rgba(15,23,42,.7);
+      overflow: hidden;
+    }
+    details.row summary {
+      list-style: none; cursor: pointer; padding: 10px 12px;
+      display: grid; grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 8px; align-items: center;
+    }
+    details.row summary::-webkit-details-marker { display: none; }
+    details.row summary span:not(:first-child) {
+      text-align: right; font-family: "JetBrains Mono", monospace; font-size: .85rem;
+    }
+    details.row[open] { border-color: rgba(56,189,248,.35); }
+    .child {
+      padding: 6px 12px 10px 28px;
+      display: grid; grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 8px; color: var(--muted); font-size: .85rem;
+      border-top: 1px solid rgba(148,163,184,.08);
+    }
+    .child span:not(:first-child) { text-align: right; font-family: "JetBrains Mono", monospace; }
+    .muted { color: var(--muted); }
+    .err { color: var(--rose); padding: 20px; }
+    h2.sec { margin: 0 0 12px; font-size: 1.15rem; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <a class="back" href="../index.html">← All demos</a>
+    <div class="kicker">Territory Dashboard · Analytics</div>
+    <h1>Dashboard de gasto territorial</h1>
+    <p class="sub">Static GitHub Pages demo · synthetic data · no server required</p>
+    <span class="badge">Datos demo sintéticos</span>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h3>Sections</h3>
+      <div class="nav" id="nav"></div>
+      <p class="muted" style="font-size:.78rem;margin-top:14px;line-height:1.4">
+        Pure HTML/JS + Chart.js. Full Python/Streamlit app remains in the repo folder
+        <code>Territory Dashboard/</code>.
+      </p>
+    </aside>
+    <main class="panel" id="view">Loading…</main>
+  </div>
+
+  <script>
+    const SECTIONS = ["Resumen", "Div / Terr", "Cuentas", "Cierres", "Trimestres"];
+    let DATA = null;
+    let charts = [];
+
+    const fmt = (v) => {
+      if (v == null || Number.isNaN(v)) return "—";
+      const n = Number(v);
+      if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(2) + "M";
+      if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(1) + "k";
+      return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
+    };
+    const sig = (v) => {
+      if (v == null || v === 0) return { cls: "", txt: "= 0" };
+      return v > 0
+        ? { cls: "up", txt: `▲ ${fmt(Math.abs(v))}` }
+        : { cls: "down", txt: `▼ ${fmt(Math.abs(v))}` };
+    };
+
+    function killCharts() {
+      charts.forEach((c) => c.destroy());
+      charts = [];
+    }
+
+    function renderNav(active) {
+      const nav = document.getElementById("nav");
+      nav.innerHTML = SECTIONS.map(
+        (s) => `<button class="${s === active ? "active" : ""}" data-sec="${s}">${s}</button>`
+      ).join("");
+      nav.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => show(b.dataset.sec))
+      );
+    }
+
+    function kpisHtml(k) {
+      const aa = sig(k.vs_aa);
+      const pl = sig(k.vs_plan);
+      return `
+        <div class="kpis">
+          <div class="kpi"><div class="t">Real 2026</div><div class="v">${fmt(k.Real_2026)}</div></div>
+          <div class="kpi"><div class="t">Real 2025</div><div class="v">${fmt(k.Real_2025)}</div>
+            <div class="s ${aa.cls}">vs AA ${aa.txt}</div></div>
+          <div class="kpi"><div class="t">Plan 2026</div><div class="v">${fmt(k.Plan_2026)}</div>
+            <div class="s ${pl.cls}">vs Plan ${pl.txt}</div></div>
+          <div class="kpi"><div class="t">Forecast</div><div class="v">${fmt(k.Forecast)}</div></div>
+        </div>`;
+    }
+
+    function showResumen() {
+      const k = DATA.kpis;
+      const view = document.getElementById("view");
+      view.innerHTML = `
+        <h2 class="sec">Resumen</h2>
+        ${kpisHtml(k)}
+        <div class="charts">
+          <div class="chart-box"><h3>Weekly series</h3><canvas id="cWeekly"></canvas></div>
+          <div class="chart-box"><h3>By division (YTD)</h3><canvas id="cDiv"></canvas></div>
+          <div class="chart-box"><h3>By account group (YTD)</h3><canvas id="cGpo"></canvas></div>
+          <div class="chart-box"><h3>Variations notes</h3>
+            <div id="notes" class="muted" style="font-size:.88rem;line-height:1.5"></div>
+          </div>
+        </div>`;
+
+      const w = DATA.weekly;
+      charts.push(new Chart(document.getElementById("cWeekly"), {
+        type: "line",
+        data: {
+          labels: w.sem,
+          datasets: [
+            { label: "Real 2025", data: w.Real_2025, borderColor: "#94a3b8", tension: 0.25, pointRadius: 0 },
+            { label: "Real 2026", data: w.Real_2026, borderColor: "#38bdf8", tension: 0.25, pointRadius: 0 },
+            { label: "Plan 2026", data: w.Plan_2026, borderColor: "#a78bfa", borderDash: [5, 4], tension: 0.25, pointRadius: 0 },
+          ],
+        },
+        options: chartOpts(),
+      }));
+
+      const div = DATA.by_division;
+      charts.push(new Chart(document.getElementById("cDiv"), {
+        type: "bar",
+        data: {
+          labels: div.map((d) => d.name.replace("Division ", "")),
+          datasets: [
+            { label: "Real 2026", data: div.map((d) => d.Real_2026), backgroundColor: "#38bdf8" },
+            { label: "Plan 2026", data: div.map((d) => d.Plan_2026), backgroundColor: "#a78bfa" },
+          ],
+        },
+        options: chartOpts(),
+      }));
+
+      const gpo = DATA.by_grupo;
+      charts.push(new Chart(document.getElementById("cGpo"), {
+        type: "bar",
+        data: {
+          labels: gpo.map((d) => d.name.split(" ")[0]),
+          datasets: [
+            { label: "Real 2026", data: gpo.map((d) => d.Real_2026), backgroundColor: "#34d399" },
+            { label: "Real 2025", data: gpo.map((d) => d.Real_2025), backgroundColor: "#64748b" },
+          ],
+        },
+        options: chartOpts(),
+      }));
+
+      const r = DATA.riesgos || {};
+      const notes = [...(r.riesgos || []), ...(r.oportunidades || [])]
+        .filter((x) => x && !x.startsWith("—"))
+        .slice(0, 8)
+        .map((x) => `<div style="margin:6px 0">• ${x}</div>`)
+        .join("");
+      document.getElementById("notes").innerHTML = notes || "No notes.";
+    }
+
+    function chartOpts() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: "#cbd5e1", boxWidth: 12 } },
+        },
+        scales: {
+          x: { ticks: { color: "#94a3b8", maxRotation: 0 }, grid: { color: "rgba(148,163,184,.08)" } },
+          y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(148,163,184,.08)" } },
+        },
+      };
+    }
+
+    function showDivTerr() {
+      const view = document.getElementById("view");
+      const head = `
+        <div style="display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:8px;padding:0 12px 8px;color:#7dd3fc;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em">
+          <span>Division / Territory</span><span style="text-align:right">Real 2025</span>
+          <span style="text-align:right">Plan 2026</span><span style="text-align:right">Real 2026</span>
+        </div>`;
+      const rows = DATA.hierarchy.map((d) => {
+        const kids = (d.children || [])
+          .map(
+            (c) => `<div class="child"><span>${c.name}</span><span>${fmt(c.Real_2025)}</span>
+              <span>${fmt(c.Plan_2026)}</span><span>${fmt(c.Real_2026)}</span></div>`
+          )
+          .join("");
+        return `<details class="row"><summary>
+          <span><strong>${d.name}</strong></span>
+          <span>${fmt(d.Real_2025)}</span><span>${fmt(d.Plan_2026)}</span><span>${fmt(d.Real_2026)}</span>
+        </summary>${kids}</details>`;
+      }).join("");
+      view.innerHTML = `<h2 class="sec">Div / Terr</h2>
+        <p class="muted" style="margin-top:0">Expand a division to see territories.</p>
+        ${head}${rows}`;
+    }
+
+    function showCuentas() {
+      const rows = DATA.accounts
+        .map(
+          (a) => `<tr>
+            <td>${a.grupo} · ${a.cuenta}</td>
+            <td>${fmt(a.Real_2025)}</td><td>${fmt(a.Plan_2026)}</td>
+            <td>${fmt(a.Real_2026)}</td>
+            <td style="color:${a.vs_plan > 0 ? "var(--rose)" : "var(--green)"}">${fmt(a.vs_plan)}</td>
+          </tr>`
+        )
+        .join("");
+      document.getElementById("view").innerHTML = `
+        <h2 class="sec">Cuentas (YTD)</h2>
+        <div style="overflow:auto">
+        <table>
+          <thead><tr><th>Account</th><th>Real 2025</th><th>Plan 2026</th><th>Real 2026</th><th>vs Plan</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+    }
+
+    function showCierres() {
+      const c = DATA.cierres || {};
+      const resumen = c.resumen || {};
+      const det = c.detalle || [];
+      const kpiItems = Object.entries(resumen)
+        .map(([name, v]) => {
+          const delta = (v.Sem_Actual || 0) - (v.Plan || 0);
+          return `<div class="kpi"><div class="t">${name}</div>
+            <div class="v">${v.Sem_Actual ?? "—"}</div>
+            <div class="s ${delta > 0 ? "up" : "down"}">Plan ${v.Plan} · Δ ${delta}</div></div>`;
+        })
+        .join("");
+      const rows = det
+        .map(
+          (r) => `<tr>
+            <td>${r.Proyecto || ""}</td><td>${r.PDC || ""}</td><td>${r.ECO ?? ""}</td>
+            <td>${r.Plan}</td><td>${r.Sem_Actual}</td><td class="muted">${r.Comentario || ""}</td>
+          </tr>`
+        )
+        .join("");
+      document.getElementById("view").innerHTML = `
+        <h2 class="sec">Cierres</h2>
+        <p class="muted" style="margin-top:0">Demo seguimiento (no Excel / OneDrive).</p>
+        <div class="kpis">${kpiItems}</div>
+        <div style="overflow:auto">
+        <table>
+          <thead><tr><th>Proyecto</th><th>PDC</th><th>ECO</th><th>Plan</th><th>Sem actual</th><th>Nota</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+    }
+
+    function showTrimestres() {
+      // Simple proxy: show accounts as "quarter matrices" using YTD (static demo)
+      const groups = {};
+      DATA.accounts.forEach((a) => {
+        groups[a.grupo] = groups[a.grupo] || [];
+        groups[a.grupo].push(a);
+      });
+      const blocks = Object.entries(groups)
+        .map(([g, rows]) => {
+          const body = rows
+            .map(
+              (a) => `<tr><td>${a.cuenta}</td><td>${fmt(a.Real_2026)}</td>
+                <td>${fmt(a.Plan_2026)}</td><td>${fmt(a.vs_aa)}</td></tr>`
+            )
+            .join("");
+          return `<div class="chart-box" style="min-height:auto">
+            <h3>${g}</h3>
+            <table><thead><tr><th>Cuenta</th><th>Real 2026</th><th>Plan</th><th>vs AA</th></tr></thead>
+            <tbody>${body}</tbody></table></div>`;
+        })
+        .join("");
+      document.getElementById("view").innerHTML = `
+        <h2 class="sec">Trimestres (demo YTD matrices)</h2>
+        <p class="muted" style="margin-top:0">Static snapshot — full weekly quarter logic lives in the Streamlit app.</p>
+        <div class="charts">${blocks}</div>`;
+    }
+
+    function show(sec) {
+      killCharts();
+      renderNav(sec);
+      if (sec === "Resumen") showResumen();
+      else if (sec === "Div / Terr") showDivTerr();
+      else if (sec === "Cuentas") showCuentas();
+      else if (sec === "Cierres") showCierres();
+      else if (sec === "Trimestres") showTrimestres();
+    }
+
+    fetch("data/demo.json")
+      .then((r) => {
+        if (!r.ok) throw new Error("demo.json not found");
+        return r.json();
+      })
+      .then((d) => {
+        DATA = d;
+        show("Resumen");
+      })
+      .catch((e) => {
+        document.getElementById("view").innerHTML =
+          `<p class="err">Failed to load data/demo.json: ${e.message}</p>`;
+      });
+  </script>
+</body>
+</html>

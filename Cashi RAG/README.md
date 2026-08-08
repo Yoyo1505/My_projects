@@ -1,45 +1,52 @@
 # Cashi RAG
 
-Local **Retrieval-Augmented Generation** toolkit for financial/code knowledge: TF–IDF style indexing, CLI query, and a tiny HTTP API.
+Local **Retrieval-Augmented Generation** toolkit: index Markdown/Python, search with TF–IDF-style ranking, optional HTTP API, and a **Streamlit demo UI**.
 
-## Structure
-
-```text
-Cashi RAG/
-├── rag/
-│   ├── indexer.py         # Build local index from .md / .py
-│   ├── query.py           # Search & CLI
-│   ├── financial_rag.py   # Numeric Q&A over parquet aggs (optional)
-│   ├── build_fast_json.py # Fast JSON helpers for aggregates
-│   └── server_api.py      # Simple HTTP API
-├── docs/                  # Sample knowledge base
-├── requirements.txt
-└── README.md
-```
-
-## Setup
+## How to try it (browser demo)
 
 ```powershell
 cd "Cashi RAG"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+streamlit run app.py
 ```
 
-## Run
+Open **http://localhost:8501** — no login.  
+First run builds `rag/index_store.json` automatically from `docs/` + source.
+
+## CLI (no UI)
 
 ```powershell
-# 1) Build index over docs + source
 python rag/indexer.py
-
-# 2) Ask a question
-python rag/query.py "how does the indexer chunk markdown"
-
-# 3) Optional HTTP API
+python rag/query.py "how does indexing work"
 python rag/server_api.py
+# then: http://localhost:8000/?q=how+does+indexing+work&mode=code
 ```
+
+## Structure
+
+```text
+Cashi RAG/
+├── app.py                 # Streamlit demo (main entry for visitors)
+├── rag/
+│   ├── indexer.py         # Build local index
+│   ├── query.py           # Search + CLI
+│   ├── financial_rag.py   # Numeric Q&A (needs optional parquet aggs)
+│   ├── build_fast_json.py
+│   └── server_api.py      # HTTP API
+├── docs/sample_knowledge.md
+├── requirements.txt
+└── README.md
+```
+
+## Why there was no “test” before
+
+After cleaning the monorepo, **Cashi** kept only the RAG library + CLI.  
+**Territory Dashboard** had Streamlit; Cashi did not — so visitors had no one-click UI.  
+`app.py` is the browser demo so anyone can try retrieval from this folder.
 
 ## Notes
 
-- Index is written to `rag/index_store.json` (gitignored).
-- `financial_rag.py` expects optional `aggs/_consolidado.parquet` for numeric queries; without it, code/doc RAG still works.
+- Index file `rag/index_store.json` is gitignored (rebuilt locally).
+- `financial_rag.py` needs `aggs/_consolidado.parquet` for number queries; **doc/code RAG works without it**.

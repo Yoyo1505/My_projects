@@ -295,9 +295,21 @@ class _AggsDiferidos(dict):
         return dict.__contains__(self, k) or (k in self._pend and (AGGS / f"{k}.parquet").exists())
 
 def _ensure_demo_data():
-    """Si no hay agregados, genera datos sintéticos para demo pública."""
+    """Generate or refresh synthetic demo aggregates when missing/outdated."""
     meta_p = AGGS / "_meta.json"
-    if meta_p.exists():
+    need = (
+        not meta_p.exists()
+        or not (AGGS / "cierres_expansion.parquet").exists()
+        or not (AGGS / "seguimiento_demo.json").exists()
+        or not (AGGS / "pdc.parquet").exists()
+    )
+    if meta_p.exists() and not need:
+        try:
+            ver = json.loads(meta_p.read_text(encoding="utf-8")).get("version_seed", 0)
+            need = ver < 2
+        except Exception:
+            need = True
+    if not need:
         return
     try:
         from seed_demo_data import build as _seed
@@ -2012,12 +2024,7 @@ st.markdown(f"""
 </div>""", unsafe_allow_html=True)
 
 SECCIONES = ["Resumen", "Temporalidad", "Div / Terr", "Detalle Cuenta", "Detalle PDC",
-             "PDC & Calor", "Cierres", "Trimestres", "Comparación de Versiones"]
-# 2026-07-24: "Plan + Real" oculta del menú por pedido del usuario (temporal)
-# — el código y los datos siguen intactos, solo se quitó de la navegación.
-# 2026-07-27: "Sem / Mes" movida justo después de Resumen. "Riesgos & Oport."
-# ELIMINADA: sus 4 tablas de variaciones (positivas/negativas × vs AA/vs Plan)
-# viven ahora al final del Resumen; las alertas automáticas se descartaron.
+             "PDC & Calor", "Cierres", "Trimestres"]
 SEC = st.segmented_control("Sección", SECCIONES, key="nav_sec",
                            default="Resumen", label_visibility="collapsed")
 if SEC is None:
@@ -2775,26 +2782,36 @@ if SEC == "Temporalidad":
 
 # ----------------------------------------------------------- 7. Cierres
 import os
-import openpyxl
 from glob import glob
 
 def _excel_seguimiento_mas_reciente():
-    """Ruta + mtime del Excel más reciente (mtime se usa como clave de caché:
-    si el archivo se vuelve a subir/editar, invalida _leer_seguimiento_excel)."""
-    base = r"E:\Usuarios\112665\OneDrive - Onuris Tenant\Archivos de Karlo De Jesus Juarez Ramirez - Planeación Financiera\1. Capex y Herramientas\Master Cierres"
+    """Optional local Excel path (private env). Demo uses seguimiento_demo.json."""
+    base = os.environ.get("MASTER_CIERRES_DIR", "")
+    if not base or not os.path.isdir(base):
+        return None, None
     archivos = glob(os.path.join(base, "Seguimiento Expansión - semana *.xlsx"))
     if not archivos:
         return None, None
     archivo = max(archivos, key=os.path.getmtime)
     return archivo, os.path.getmtime(archivo)
 
+@st.cache_data(show_spinner="Loading seguimiento…")
+def _leer_seguimiento_demo():
+    """Synthetic seguimiento for public demo (seed_demo_data.py)."""
+    fp = AGGS / "seguimiento_demo.json"
+    if not fp.exists():
+        return None, None, None
+    doc = json.loads(fp.read_text(encoding="utf-8"))
+    return doc.get("resumen") or {}, doc.get("detalle") or [], doc.get("archivo", "demo")
+
 @st.cache_data(show_spinner="Leyendo Excel de seguimiento…")
 def _leer_seguimiento_excel(archivo: str, _mtime: float):
-    """Lee el Excel de Seguimiento Expansión más reciente del Master Cierres.
-    Cacheado por (archivo, mtime) — evita releer/parsear el .xlsx con
-    openpyxl en cada rerun de Streamlit (era el cuello de botella de la
-    pestaña Cierres: el script completo se re-ejecuta con cada interacción)."""
+    """Read optional local Excel when MASTER_CIERRES_DIR is set."""
     if archivo is None:
+        return None, None, None
+    try:
+        import openpyxl
+    except ImportError:
         return None, None, None
     wb = openpyxl.load_workbook(archivo, data_only=True)
     ws = wb["Seguimiento semanal"]
@@ -2803,8 +2820,6 @@ def _leer_seguimiento_excel(archivo: str, _mtime: float):
     tabla_detalle = []
 
     def _a_num(v):
-        # Celdas de Plan/Sem26/Sem_Actual llegan con tipos mixtos (int/float/str)
-        # desde el Excel — Arrow no serializa una columna object así.
         try:
             return int(float(v))
         except (TypeError, ValueError):
@@ -2820,8 +2835,6 @@ def _leer_seguimiento_excel(archivo: str, _mtime: float):
             "Sem_Actual": _a_num(ws[f"K{row_idx}"].value),
         }
 
-    # Encabezados reales en fila 21: B=Proyecto C=Especialidad D=Formato
-    # agrupado E=Formato F=Eco (id numérico) G=PDC (nombre) H=Comentario
     for row_idx in range(22, 530):
         proyecto = ws[f"B{row_idx}"].value
         if not proyecto:
@@ -2843,13 +2856,16 @@ def _leer_seguimiento_excel(archivo: str, _mtime: float):
 
 if SEC == "Cierres":
     _archivo_seg, _mtime_seg = _excel_seguimiento_mas_reciente()
-    tabla_resumen, tabla_detalle, archivo = _leer_seguimiento_excel(_archivo_seg, _mtime_seg)
-
-    if tabla_resumen is None:
-        st.error("No se encontró Excel de 'Seguimiento Expansión'. Verifica la carpeta Master Cierres.")
+    if _archivo_seg:
+        tabla_resumen, tabla_detalle, archivo = _leer_seguimiento_excel(_archivo_seg, _mtime_seg)
     else:
-        nom_archivo = os.path.basename(archivo)
-        st.caption(f"📄 {nom_archivo}")
+        tabla_resumen, tabla_detalle, archivo = _leer_seguimiento_demo()
+
+    if not tabla_resumen:
+        st.error("No seguimiento data. Run `python seed_demo_data.py`.")
+    else:
+        nom_archivo = os.path.basename(str(archivo)) if archivo else "demo"
+        st.caption(f"📄 {nom_archivo}" + (" (demo)" if META.get("demo") else ""))
 
         st.markdown("### Resumen por tipo de cierre")
         _items_resumen = []
@@ -2868,10 +2884,12 @@ if SEC == "Cierres":
 
         @st.cache_data(show_spinner=False)
         def _cons_pdc_pivot():
-            """Gasto por PDC (Real25/Plan26/Real26) pivotado desde
-            _consolidado.parquet. Cacheado: no cambia entre reruns del
-            script, solo cuando corre build_data.py."""
-            cons_pdc = (pl.scan_parquet(AGGS / "_consolidado.parquet")
+            """Spend by PDC from _consolidado.parquet (or zeros if missing)."""
+            fp = AGGS / "_consolidado.parquet"
+            if not fp.exists():
+                return pd.DataFrame(columns=[
+                    "cat_PDC", "Gasto_Real_2026", "Gasto_Plan_2026", "Gasto_Real_2025"])
+            cons_pdc = (pl.scan_parquet(fp)
                         .group_by(["cat_PDC", "Serie"]).agg(pl.col("monto").sum())
                         .collect().to_pandas()
                         .pivot(index="cat_PDC", columns="Serie", values="monto")
@@ -2958,28 +2976,32 @@ if SEC == "Cierres":
             _pdc_tbl1 = tuple(_df_detalle_vista["ECO"].apply(_eco_a_pdc_seguro).dropna().unique())
             if not _pdc_tbl1:
                 st.info("No se pudo mapear ningún ECO de esta tabla a un PDC del catálogo.")
+            elif EXTRA.get("cierres_arbol") is None and not (AGGS / "cierres_arbol.parquet").exists():
+                st.info("Falta `aggs/cierres_arbol.parquet`. Run `python seed_demo_data.py`.")
             else:
                 _cols_arbol_eco = ("cat_Grupo_de_Cuentas", "cat_Cuentas", "cat_Agrupador_Reales", "cat_PDC")
                 _arbol_filt = (("cat_PDC", _pdc_tbl1),)
+                _pdc_match = list(_pdc_tbl1)
                 if _q_arbol:
                     _q_low = _q_arbol.strip().lower()
-                    _df_ca = EXTRA["cierres_arbol"].filter(pl.col("cat_PDC").is_in(list(_pdc_tbl1)))
+                    try:
+                        _df_ca = EXTRA["cierres_arbol"].filter(pl.col("cat_PDC").is_in(list(_pdc_tbl1)))
+                    except KeyError:
+                        _df_ca = pl.read_parquet(AGGS / "cierres_arbol.parquet").filter(
+                            pl.col("cat_PDC").is_in(list(_pdc_tbl1)))
                     _cond = pl.lit(False)
                     for _c in _cols_arbol_eco:
-                        _cond = _cond | pl.col(_c).str.to_lowercase().str.contains(_q_low, literal=True)
+                        if _c in _df_ca.columns:
+                            _cond = _cond | pl.col(_c).cast(pl.Utf8).str.to_lowercase().str.contains(
+                                _q_low, literal=True)
                     _pdc_match = set(_df_ca.filter(_cond).select("cat_PDC").unique()
                                      .to_series().to_list())
-                    # el buscador también debe encontrar por ID (Eco PDV) del PDC,
-                    # que no aparece como texto dentro de cat_PDC (ese trae el
-                    # nombre) — comparación EXACTA de id contra PDC_IDS (no
-                    # substring, para no matchear 276 contra 1276/2765/etc.).
                     _pdc_match |= {nombre for nombre in _pdc_tbl1
                                   if _idtxt_pdc(nombre) == _q_low}
                     _pdc_match = list(_pdc_match)
                     if not _pdc_match:
                         st.info("Sin resultados para esa búsqueda.")
-                        _pdc_match = []
-                    _arbol_filt = (("cat_PDC", tuple(_pdc_match)),)
+                    _arbol_filt = (("cat_PDC", tuple(_pdc_match)),) if _pdc_match else _arbol_filt
                 if not _q_arbol or _pdc_match:
                     st.markdown(arbol_multicol("cierres_arbol", _cols_arbol_eco,
                                               si, sf, ind, _arbol_filt, MES, SEMS),
@@ -3038,7 +3060,17 @@ def _tri_arbol(q: str, filtros: tuple) -> str:
 
 if SEC == "Trimestres":
     def _pdc_filtrado():
-        d = AGG["pdc"]
+        try:
+            d = AGG["pdc"]
+        except KeyError:
+            st.error("Falta `aggs/pdc.parquet`. Run `python seed_demo_data.py`.")
+            st.stop()
+        # Prefer cuentas grain if pdc lacks account columns (legacy seed)
+        if "cat_Grupo_de_Cuentas" not in d.columns or "cat_Cuentas" not in d.columns:
+            d = AGG.get("cuentas")
+            if d is None:
+                st.error("Demo data incomplete. Run `python seed_demo_data.py`.")
+                st.stop()
         for k, v_ in FILT:
             if k in d.columns:
                 d = d.filter(pl.col(k).is_in(list(v_)) if isinstance(v_, tuple) else pl.col(k) == v_)
@@ -3046,15 +3078,27 @@ if SEC == "Trimestres":
 
     st.caption("Usa el botón **+** de cada fila para desglosarla, "
                "y **−** para cerrarla.")
+    _src_tri = "pdc"
+    try:
+        _pdc_chk = AGG["pdc"]
+        if "cat_Grupo_de_Cuentas" not in _pdc_chk.columns:
+            _src_tri = "cuentas"
+    except KeyError:
+        _src_tri = "cuentas"
+
     ca, cb = st.columns(2)
     with ca:
         qa = st.selectbox("Matriz A", ["Q1", "Q2", "Q3", "Q4", "FY"], index=0, key="tri_qa")
-        st.markdown(_tri_arbol(qa, FILT), unsafe_allow_html=True)
+        lo, hi = QRANGO_TRI[qa]
+        st.markdown(arbol_multicol(_src_tri, ("cat_Grupo_de_Cuentas", "cat_Cuentas"),
+                                   lo, hi, False, FILT), unsafe_allow_html=True)
         descargar(_agregar_df(_pdc_filtrado(), ["cat_Grupo_de_Cuentas", "cat_Cuentas"],
                               *QRANGO_TRI[qa], False), f"trimestre_{qa}_A")
     with cb:
         qb = st.selectbox("Matriz B", ["Q1", "Q2", "Q3", "Q4", "FY"], index=4, key="tri_qb")
-        st.markdown(_tri_arbol(qb, FILT), unsafe_allow_html=True)
+        lo, hi = QRANGO_TRI[qb]
+        st.markdown(arbol_multicol(_src_tri, ("cat_Grupo_de_Cuentas", "cat_Cuentas"),
+                                   lo, hi, False, FILT), unsafe_allow_html=True)
         descargar(_agregar_df(_pdc_filtrado(), ["cat_Grupo_de_Cuentas", "cat_Cuentas"],
                               *QRANGO_TRI[qb], False), f"trimestre_{qb}_B")
 
