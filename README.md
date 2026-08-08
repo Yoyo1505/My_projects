@@ -1,47 +1,31 @@
-# My Projects – Data Analysis, Finance and Quantitative Research
+# My Projects – Data Analysis, Finance, AI Dashboards & RAG
 
-This repository contains a curated collection of applied projects developed in Python, focused on data analysis, financial risk, quantitative modeling, and network analysis.
+Portafolio de proyectos en Python: análisis de datos, riesgo financiero, modelado cuantitativo, **tableros con alertas IA** y sistemas **RAG**.
 
-The objective of this repository is to demonstrate practical skills in:
-- Data cleaning and exploratory analysis
-- Financial risk measurement and portfolio analysis
-- Quantitative modeling and simulations
-- Clear communication of results through notebooks and reports
+## Projects
 
-Each project is structured as an independent case study, following professional standards commonly used in consulting firms, financial institutions, and data-driven organizations.
+| Proyecto | Tipo | Descripción |
+|----------|------|-------------|
+| **[cashi_rag](cashi_rag/)** | Sistema **RAG** | Asistente financiero con recuperación aumentada: indexación local, consulta y API |
+| **[dashboard_vista_territorio](dashboard_vista_territorio/)** | **Tableros + alertas IA** | Dashboard Streamlit territorial/contable, ETL y alertas de riesgos/oportunidades |
+| **[financial_risk_analysis](financial_risk_analysis/)** | Riesgo | VaR, Monte Carlo, stress testing |
+| **[Loan Assessment System](Loan%20Assessment%20System/)** | Crédito | Análisis de aprobación de préstamos |
+| **[Leverage Buyout Model](Leverage%20Buyout%20Model/)** | Corporate finance | Caso LBO |
+| **[quantum_computing](quantum_computing/)** | Experimental | Starters Qiskit / PennyLane |
 
-## Repository Structure
+## Estructura del repositorio
 
-Each folder represents a complete project and includes:
-- A project-specific README explaining objectives, methodology, and results
-- Clean and reusable Python code
-- Jupyter notebooks with analysis and visualizations
-- Reproducible environments and dependencies
+Cada carpeta es un proyecto independiente (README, código, dependencias).
 
-## Projects Included
+**Datos y secretos no se suben a GitHub:** credenciales (`.env`), usuarios, parquets, catálogos grandes y zips de agregados se mantienen **fuera** del repo. Ver `DATA.md` y `.env.ejemplo` en cada proyecto que aplique.
 
-- **Financial Risk Analysis**  
-  Measurement of market and portfolio risk using Value at Risk (VaR), Monte Carlo simulations, and stress testing techniques.
+## Stack general
 
-- **Network Analysis**  
-  Graph-based modeling and analysis using Python libraries to explore relationships and structures in complex systems.
+- Python, pandas, numpy, polars, duckdb  
+- Streamlit, Plotly  
+- RAG local / asistentes  
+- Jupyter, Git  
 
-- **Data Analysis Projects**  
-  Applied data analysis cases focused on extracting insights and communicating results clearly.
+## About
 
-## Tools and Technologies
-
-- Python
-- pandas, numpy, scipy
-- matplotlib, seaborn
-- Jupyter Notebook
-- Git and GitHub
-
-## About This Repository
-
-This repository is intended as a professional portfolio for roles related to:
-- Data Analysis
-- Financial Risk and Quantitative Analysis
-- Consulting and Analytics
-
-Each project emphasizes clarity, reproducibility, and business-relevant insights.
+Portfolio orientado a roles de Data Analysis, Analytics Engineering, Financial Risk y soluciones de IA aplicada a finanzas.

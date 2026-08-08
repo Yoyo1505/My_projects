@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large data & model files
+*.pkl
+*.db
+*.parquet
+*.duckdb
+*.zip
+
+# Secrets & local auth (never commit)
+.env
+**/.env
+usuarios.json
+**/usuarios.json
+
+# Logs & temp
+*.log
+.tmp/
+_ddb_tmp/
+
+# IDEs / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Project-specific heavy / backup dirs
+**/_respaldo/
+**/respaldos/
+**/aggs_versiones/
+**/_archivo/
+
+# Business data kept outside the repo
+*.xlsx
+*.docx
+aggs/
+**/elektra_logo.png
+estado.json
+**/index_store.json

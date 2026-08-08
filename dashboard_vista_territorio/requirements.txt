@@ -1,0 +1,8 @@
+﻿streamlit>=1.30
+polars
+pandas
+plotly
+duckdb
+openpyxl
+fastexcel
+pyodbc

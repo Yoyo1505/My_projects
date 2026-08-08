@@ -1,0 +1,26 @@
+﻿# Secrets & local auth
+.env
+usuarios.json
+comentarios.json
+
+# Data / caches (keep outside git)
+*.parquet
+*.duckdb
+_ddb_tmp/
+aggs/_consolidado.parquet
+.tmp/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs & backups
+*.log
+_respaldo/
+respaldos/
+aggs_versiones/
+_archivo/
+*.bak
+
+# Large business sources
+*estructura.xlsx

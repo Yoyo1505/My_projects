@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente RAG Financiero & Territorio · Grupo Elektra</title>
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1e38 50%, #090d16 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-red: #e60000;
+            --accent-red-hover: #ff1a1a;
+            --accent-glow: rgba(230, 0, 0, 0.3);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --badge-green: #10b981;
+            --badge-blue: #3b82f6;
+            --badge-amber: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .brand-text h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--badge-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--badge-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--badge-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .hero h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .search-box-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 8px 12px 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+        }
+
+        .search-box-container:focus-within {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            background: var(--accent-red);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background: var(--accent-red-hover);
+            transform: translateY(-1px);
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chip:hover {
+            background: rgba(230, 0, 0, 0.15);
+            border-color: var(--accent-red);
+            color: var(--text-primary);
+        }
+
+        .result-container {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .metric-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .metric-sub {
+            font-size: 13px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .negative { color: #f87171; }
+        .positive { color: #60a5fa; }
+
+        .answer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            line-height: 1.6;
+        }
+
+        .answer-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .data-table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-top: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 12px 16px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-top: 1px solid var(--card-border);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-logo">E</div>
+            <div class="brand-text">
+                <h1>Asistente RAG Financiero & Territorio</h1>
+                <p>Grupo Elektra · Consulta Inteligente de Datos</p>
+            </div>
+        </div>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>RAG Financiero Activo (Modo Local)</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h2>¿Qué cifra o consulta financiera deseas analizar hoy?</h2>
+            <p>Pregunta directamente sobre gasto de nómina por CECO, variaciones de divisiones, match de cuentas o métricas acumuladas en lenguaje natural.</p>
+        </div>
+
+        <div class="search-box-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Ej. ¿Cuál es el gasto de nómina para el CECO 1005?" onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="execQuery()">
+                <span>Consultar RAG</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <div class="suggestions">
+            <div class="chip" onclick="setQuery('¿Cuál es el gasto de nómina para el CECO 1005?')">💼 Nómina CECO 1005</div>
+            <div class="chip" onclick="setQuery('¿Cuál es el gasto mensual de la División Norte?')">🗺️ División Norte</div>
+            <div class="chip" onclick="setQuery('¿Cuál es el resumen de match de los CECOs?')">🔗 Match de CECOs</div>
+            <div class="chip" onclick="setQuery('¿Cuánto gastamos en Publicidad y Mercadotecnia?')">📢 Publicidad</div>
+            <div class="chip" onclick="setQuery('¿Cuál es la variación total del Real 2026 vs Plan?')">📊 Variación Global</div>
+        </div>
+
+        <div id="resultBox" class="result-container">
+            <div class="metrics-grid" id="metricsGrid"></div>
+
+            <div class="answer-card">
+                <h3 id="answerTitle">Resultado de la Consulta</h3>
+                <div id="answerBody"></div>
+                
+                <div id="tableWrapper" class="data-table-container" style="display:none;">
+                    <table id="dataTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Sistema RAG Local Standalone · Planeación Financiera Grupo Elektra · Operación 100% Offline
+    </footer>
+
+    <script>
+        const MOCK_DATA = {
+            "ceco 1005": {
+                title: "Detalle Financiero: CECO 1005 (Nómina y Gastos Operativos)",
+                response: "El gasto acumulado **Real 2026** de Nómina y Personal para el **CECO 1005** es de **4.85 MDP**, lo que representa un cumplimiento del **96.2%** frente al Plan 2026 (**5.04 MDP**), generando un ahorro favorable de **(0.19 MDP)**.",
+                metrics: [
+                    { title: "Real 2026", val: "4.85 MDP", sub: "Gasto Ejecutado", type: "positive" },
+                    { title: "Plan 2026", val: "5.04 MDP", sub: "Presupuesto Original", type: "positive" },
+                    { title: "Variación vs Plan", val: "-0.19 MDP", sub: "▼ Ahorro Favorable", type: "positive" },
+                    { title: "Real 2025 (AA)", val: "4.42 MDP", sub: "+9.7% Crecimiento", type: "negative" }
+                ],
+                headers: ["PDC / Eco", "Grupo de Cuentas", "Cuenta Contable", "Real 2025", "Plan 2026", "Real 2026"],
+                rows: [
+                    ["1005 · Oficinas Centrales", "Servicios Personales", "Sueldos y Salarios", "3.10 MDP", "3.50 MDP", "3.42 MDP"],
+                    ["1005 · Oficinas Centrales", "Servicios Personales", "Previsiones Sociales", "0.90 MDP", "1.00 MDP", "0.98 MDP"],
+                    ["1005 · Oficinas Centrales", "Honorarios", "Honorarios Asimilados", "0.42 MDP", "0.54 MDP", "0.45 MDP"]
+                ]
+            },
+            "division norte": {
+                title: "Gasto por División: División Norte",
+                response: "La **División Norte** registra un gasto **Real 2026 acumulado de 142.30 MDP** (Plan 2026: **138.80 MDP**). Se identifica un sobregasto concentrado en las cuentas de *Mantenimiento y Renta de Locales*.",
+                metrics: [
+                    { title: "Real 2026", val: "142.30 MDP", sub: "Ejecutado Acumulado", type: "negative" },
+                    { title: "Plan 2026", val: "138.80 MDP", sub: "Presupuestado", type: "positive" },
+                    { title: "Vs Plan", val: "+3.50 MDP", sub: "▲ Sobregasto", type: "negative" },
+                    { title: "Real 2025", val: "131.20 MDP", sub: "+8.4% vs Año Ant.", type: "negative" }
+                ],
+                headers: ["División", "Grupo de Cuentas", "Real 2025", "Plan 2026", "Real 2026"],
+                rows: [
+                    ["División Norte", "Gastos de Operación", "68.50 MDP", "65.00 MDP", "67.80 MDP"],
+                    ["División Norte", "Servicios Personales", "45.20 MDP", "46.10 MDP", "45.90 MDP"],
+                    ["División Norte", "Mantenimiento y Locales", "17.50 MDP", "15.70 MDP", "17.10 MDP"],
+                    ["División Norte", "Otros Gastos", "10.00 MDP", "12.00 MDP", "11.50 MDP"]
+                ]
+            },
+            "match": {
+                title: "Mapeo y Match de Centros de Costos (CECO) ↔ PDC",
+                response: "Se verificó el match entre **4,115 PDCs** y **21,056 Centros de Costos**. Un 98.4% de los CECOs cruzan correctamente con el Catálogo de Estructura vigente.",
+                metrics: [
+                    { title: "PDCs Totales", val: "4,115", sub: "Puntos de Contacto", type: "positive" },
+                    { title: "CECOs Totales", val: "21,056", sub: "Centros de Costo", type: "positive" },
+                    { title: "Tasa de Match", val: "98.4%", sub: "Asignación Correcta", type: "positive" },
+                    { title: "Sin Agrupar", val: "1.6%", sub: "Asignados a CECO Genérico", type: "negative" }
+                ],
+                headers: ["PDC / Eco", "CECO", "Movimientos", "Estatus Match", "Real 2026"],
+                rows: [
+                    ["Casa Ley San Miguel", "325", "1,240", "Match Correcto", "0.43 MDP"],
+                    ["Azulemex Periferico", "829", "980", "Match Correcto", "0.36 MDP"],
+                    ["Mega Cd Juarez", "144", "1,850", "Match Correcto", "1.12 MDP"],
+                    ["CECO 4821 (Sin PDC)", "4821", "410", "CECO Genérico", "0.22 MDP"]
+                ]
+            }
+        };
+
+        function setQuery(text) {
+            document.getElementById('searchInput').value = text;
+            execQuery();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') execQuery();
+        }
+
+        function execQuery() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const resBox = document.getElementById('resultBox');
+            resBox.style.display = 'flex';
+
+            const qLower = query.toLowerCase();
+            let matchedData = null;
+
+            if (qLower.includes('1005') || qLower.includes('nomina') || qLower.includes('ceco')) {
+                matchedData = MOCK_DATA["ceco 1005"];
+            } else if (qLower.includes('norte') || qLower.includes('division') || qLower.includes('división')) {
+                matchedData = MOCK_DATA["division norte"];
+            } else if (qLower.includes('match') || qLower.includes('mapeo')) {
+                matchedData = MOCK_DATA["match"];
+            } else {
+                matchedData = {
+                    title: "Consulta Financiera Consolidada",
+                    response: `Resultados RAG para **"${query}"**:\n\nGasto acumulado **Real 2026**: **16,567.4 MDP** | **Plan 2026**: **15,892.1 MDP** | **Forecast Cierre**: **28,949.2 MDP**.\nVariación general vs Plan: **(+675.3 MDP)** sobregasto controlado.`,
+                    metrics: [
+                        { title: "Real 2026", val: "16,567.4 MDP", sub: "Acumulado a Sem 30", type: "negative" },
+                        { title: "Plan 2026", val: "15,892.1 MDP", sub: "Presupuesto", type: "positive" },
+                        { title: "Vs Plan", val: "+675.3 MDP", sub: "▲ Variación", type: "negative" },
+                        { title: "Forecast Cierre", val: "28,949.2 MDP", sub: "Cierre Estimado", type: "positive" }
+                    ],
+                    headers: ["Serie", "Semana 1..30", "Semana 31..53", "Total Año"],
+                    rows: [
+                        ["Real 2026", "16,567.4 MDP", "—", "16,567.4 MDP"],
+                        ["Plan 2026", "15,892.1 MDP", "12,381.8 MDP", "28,273.9 MDP"],
+                        ["Forecast 2026", "16,567.4 MDP", "12,381.8 MDP", "28,949.2 MDP"]
+                    ]
+                };
+            }
+
+            renderResult(matchedData);
+        }
+
+        function renderResult(data) {
+            document.getElementById('answerTitle').innerText = data.title;
+            document.getElementById('answerBody').innerHTML = data.response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Render Metrics
+            const grid = document.getElementById('metricsGrid');
+            grid.innerHTML = data.metrics.map(m => `
+                <div class="metric-card">
+                    <div class="metric-title">${m.title}</div>
+                    <div class="metric-value">${m.val}</div>
+                    <div class="metric-sub ${m.type}">${m.sub}</div>
+                </div>
+            `).join('');
+
+            // Render Table
+            if (data.headers && data.rows) {
+                document.getElementById('tableWrapper').style.display = 'block';
+                document.getElementById('tableHead').innerHTML = `<tr>${data.headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                document.getElementById('tableBody').innerHTML = data.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+            } else {
+                document.getElementById('tableWrapper').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

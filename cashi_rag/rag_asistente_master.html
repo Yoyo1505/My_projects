@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente RAG Fast (<5ms) · Cashi & Datos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: rgba(22, 30, 49, 0.85);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --accent-red: #e60000;
+            --accent-glow: rgba(230, 0, 0, 0.35);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at 50% 0%, #172036 0%, #0b0f19 75%); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+        header { padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(11, 15, 25, 0.9); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-card); position: sticky; top: 0; z-index: 100; }
+        .brand { display: flex; align-items: center; gap: 14px; }
+        .logo { width: 42px; height: 42px; background: var(--accent-red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; box-shadow: 0 0 20px var(--accent-glow); }
+        .title-group h1 { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; }
+        .title-group p { font-size: 12px; color: var(--text-sub); }
+        .net-badge { display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); }
+
+        main { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 20px; display: flex; flex-direction: column; gap: 24px; }
+        .search-area { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 8px 12px 8px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .search-area:focus-within { border-color: var(--accent-red); box-shadow: 0 0 25px var(--accent-glow); }
+        input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-main); font-size: 16px; font-family: inherit; }
+        .btn-query { background: var(--accent-red); border: none; color: white; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .chip { background: rgba(255,255,255,0.04); border: 1px solid var(--border-card); color: var(--text-sub); padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+        .chip:hover { background: rgba(230,0,0,0.15); border-color: var(--accent-red); color: var(--text-main); }
+
+        .results-box { display: none; flex-direction: column; gap: 20px; animation: fadeIn 0.15s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .kpis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+        .kpi-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 14px; padding: 18px; }
+        .kpi-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
+        .kpi-val { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; }
+
+        .card-content { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 24px; }
+        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-card); margin-top: 16px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left; }
+        th { background: rgba(11, 15, 25, 0.9); padding: 12px; color: var(--text-sub); border-bottom: 1px solid var(--border-card); }
+        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="logo">C</div>
+            <div class="title-group">
+                <h1>Cashi · Asistente RAG Ultrarrápido (&lt;5ms)</h1>
+                <p>Respuestas instantáneas en memoria sobre Cifras, CECOs, Divisiones y Semanas</p>
+            </div>
+        </div>
+        <div class="net-badge">
+            <div class="dot"></div>
+            <span>Índice Ultrarrápido Carga Inmediata</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="search-area">
+            <input type="text" id="qInput" placeholder="Pregúntame lo que quieras: cifras por CECO, división norte, nómina, semanas..." oninput="instantSearch()">
+            <button class="btn-query" onclick="instantSearch()">Buscar Instantáneo</button>
+        </div>
+
+        <div class="chips">
+            <div class="chip" onclick="quickQuery('ceco 239389')">💼 CECO 239389</div>
+            <div class="chip" onclick="quickQuery('division norte')">🗺️ División Norte</div>
+            <div class="chip" onclick="quickQuery('gastos de nomina')">💰 Gastos de Nómina</div>
+            <div class="chip" onclick="quickQuery('renta luz y telefono')">💡 Rentas & Luz</div>
+        </div>
+
+        <div class="results-box" id="resBox">
+            <div class="kpis-grid" id="kpiGrid"></div>
+            <div class="card-content">
+                <h3 id="resTitle">Resultado</h3>
+                <div id="resBody"></div>
+                <div class="table-wrap" id="tableWrap" style="display:none;">
+                    <table>
+                        <thead id="tHead"></thead>
+                        <tbody id="tBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let INDEX = null;
+
+        // Carga inmediata del índice JSON de 85 KB
+        fetch('aggs/rag_fastindex.json')
+            .then(r => r.json())
+            .then(data => { INDEX = data; console.log("Índice RAG cargado en memoria (<5ms)"); })
+            .catch(err => console.error("Error al cargar índice:", err));
+
+        function quickQuery(text) {
+            document.getElementById('qInput').value = text;
+            instantSearch();
+        }
+
+        function M(v) { return (v / 1e6).toFixed(2) + ' MDP'; }
+
+        function instantSearch() {
+            const query = document.getElementById('qInput').value.toLowerCase().trim();
+            if (!query || !INDEX) return;
+
+            document.getElementById('resBox').style.display = 'flex';
+
+            // Buscar en CECOs
+            const matchCeco = INDEX.cecos.filter(c => c.ceco.includes(query) || (c.pdc && c.pdc.toLowerCase().includes(query)));
+            if (matchCeco.length > 0) {
+                renderCecos(matchCeco.slice(0, 15), query);
+                return;
+            }
+
+            // Buscar en Divisiones
+            const matchDiv = INDEX.divisiones.filter(d => d.division && d.division.toLowerCase().includes(query));
+            if (matchDiv.length > 0) {
+                renderDivisions(matchDiv, query);
+                return;
+            }
+
+            // Buscar en Grupos
+            const matchGpo = INDEX.grupos.filter(g => g.grupo && g.grupo.toLowerCase().includes(query));
+            if (matchGpo.length > 0) {
+                renderGroups(matchGpo, query);
+                return;
+            }
+
+            // Fallback General
+            renderGeneral();
+        }
+
+        function renderCecos(rows, q) {
+            document.getElementById('resTitle').innerText = `Detalle de CECOs / PDC para "${q}"`;
+            const r26 = rows.reduce((a, b) => a + (b.r26 || 0), 0);
+            const p26 = rows.reduce((a, b) => a + (b.p26 || 0), 0);
+
+            document.getElementById('resBody').innerHTML = `<p>Resultados instantáneos para <strong>${q}</strong>:</p>`;
+            document.getElementById('kpiGrid').innerHTML = `
+                <div class="kpi-card"><div class="kpi-label">Real 2026</div><div class="kpi-val">${M(r26)}</div></div>
+                <div class="kpi-card"><div class="kpi-label">Plan 2026</div><div class="kpi-val">${M(p26)}</div></div>
+                <div class="kpi-card"><div class="kpi-label">Variación vs Plan</div><div class="kpi-val">${M(r26 - p26)}</div></div>
+            `;
+
+            document.getElementById('tableWrap').style.display = 'block';
+            document.getElementById('tHead').innerHTML = `<tr><th>CECO</th><th>PDC</th><th>Grupo de Cuentas</th><th>Real 2025</th><th>Plan 2026</th><th>Real 2026</th></tr>`;
+            document.getElementById('tBody').innerHTML = rows.map(r => `
+                <tr>
+                    <td><strong>${r.ceco}</strong></td>
+                    <td>${r.pdc || '—'}</td>
+                    <td>${r.grupo || '—'}</td>
+                    <td>${M(r.r25)}</td>
+                    <td>${M(r.p26)}</td>
+                    <td><strong>${M(r.r26)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderDivisions(rows, q) {
+            document.getElementById('resTitle').innerText = `Gasto Consolidado por División`;
+            const r26 = rows.reduce((a, b) => a + (b.r26 || 0), 0);
+            const p26 = rows.reduce((a, b) => a + (b.p26 || 0), 0);
+
+            document.getElementById('resBody').innerHTML = `<p>Resultados acumulados para la consulta de división:</p>`;
+            document.getElementById('kpiGrid').innerHTML = `
+                <div class="kpi-card"><div class="kpi-label">Real 2026</div><div class="kpi-val">${M(r26)}</div></div>
+                <div class="kpi-card"><div class="kpi-label">Plan 2026</div><div class="kpi-val">${M(p26)}</div></div>
+                <div class="kpi-card"><div class="kpi-label">Variación vs Plan</div><div class="kpi-val">${M(r26 - p26)}</div></div>
+            `;
+
+            document.getElementById('tableWrap').style.display = 'block';
+            document.getElementById('tHead').innerHTML = `<tr><th>División</th><th>Real 2025</th><th>Plan 2026</th><th>Real 2026</th></tr>`;
+            document.getElementById('tBody').innerHTML = rows.map(r => `
+                <tr>
+                    <td><strong>${r.division}</strong></td>
+                    <td>${M(r.r25)}</td>
+                    <td>${M(r.p26)}</td>
+                    <td><strong>${M(r.r26)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderGroups(rows, q) {
+            document.getElementById('resTitle').innerText = `Gasto por Grupo de Cuentas`;
+            const r26 = rows.reduce((a, b) => a + (b.r26 || 0), 0);
+            const p26 = rows.reduce((a, b) => a + (b.p26 || 0), 0);
+
+            document.getElementById('resBody').innerHTML = `<p>Resultados instantáneos por Grupo de Cuentas:</p>`;
+            document.getElementById('kpiGrid').innerHTML = `
+                <div class="kpi-card"><div class="kpi-label">Real 2026</div><div class="kpi-val">${M(r26)}</div></div>
+                <div class="kpi-card"><div class="kpi-label">Plan 2026</div><div class="kpi-val">${M(p26)}</div></div>
+            `;
+
+            document.getElementById('tableWrap').style.display = 'block';
+            document.getElementById('tHead').innerHTML = `<tr><th>Grupo de Cuentas</th><th>Real 2025</th><th>Plan 2026</th><th>Real 2026</th></tr>`;
+            document.getElementById('tBody').innerHTML = rows.map(r => `
+                <tr>
+                    <td><strong>${r.grupo}</strong></td>
+                    <td>${M(r.r25)}</td>
+                    <td>${M(r.p26)}</td>
+                    <td><strong>${M(r.r26)}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderGeneral() {
+            if (!INDEX || !INDEX.divisiones) return;
+            renderDivisions(INDEX.divisiones.slice(0, 10), "general");
+        }
+    </script>
+</body>
+</html>
