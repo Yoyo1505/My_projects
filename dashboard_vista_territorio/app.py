@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Dashboard Vista Territorio — Grupo Elektra (Streamlit)
+Dashboard Vista Territorio — Streamlit (demo pública)
 
-Lee los agregados precomputados por build_data.py (carpeta aggs/).
-Cero hardcode: todas las cifras salen de los parquets.
+Lee agregados en aggs/. Si no hay datos, genera demo sintética.
+Acceso abierto: sin login ni branding corporativo.
 
 Correr:
     streamlit run app.py
@@ -26,16 +26,15 @@ import streamlit as st
 BASE = Path(__file__).parent.resolve()
 AGGS = BASE / "aggs"
 USERS_FILE = BASE / "usuarios.json"
-SALT = "elektra_finanzas_2026_salt"
 
 MEDIDAS = ["Real_2025", "Plan_2026", "Real_2026", "Nvo_Plan_2026"]
 # Rangos de semana fijos por trimestre (año EKT de 53 semanas: Q4 absorbe la
 # semana 53 extra). Usado por la pestaña Trimestres y por la tabla Trimestral
 # de Temporalidad — un solo lugar para no divergir entre las dos.
 QRANGO_TRI = {"Q1": (1, 13), "Q2": (14, 26), "Q3": (27, 39), "Q4": (40, 53), "FY": (1, 53)}
-COLOR = {"Real_2025": "#ccd1d9", "Real_2026": "#f1948a",
-         "Plan_2026": "#a93226", "Nvo_Plan_2026": "#5dade2",
-         "Forecast_Cierre": "#8a93a0"}
+COLOR = {"Real_2025": "#94a3b8", "Real_2026": "#38bdf8",
+         "Plan_2026": "#a78bfa", "Nvo_Plan_2026": "#34d399",
+         "Forecast_Cierre": "#fbbf24"}
 NOMBRE = {"Real_2025": "Real 2025", "Real_2026": "Real 2026",
           "Plan_2026": "Plan 2026", "Nvo_Plan_2026": "Nvo Plan",
           "Forecast_Cierre": "Forecast"}
@@ -142,19 +141,79 @@ def semanal_a_mensual(w: pd.DataFrame) -> pd.DataFrame:
         out.append(rec)
     return pd.DataFrame(out)
 
-st.set_page_config(page_title="Vista Territorio · Grupo Elektra",
-                   page_icon="📊", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Vista Territorio",
+                   page_icon="◈", layout="wide", initial_sidebar_state="expanded")
 
-# KPIs: sombreado gris (se perdían sobre el fondo blanco) y tamaño uniforme,
-# un punto más chicos que el default de st.metric.
-# Encabezado/color de st.dataframe (única tabla usada en el proyecto, ver
-# nota en fmt_tabla): NO se puede tocar por CSS (canvas de glide-data-grid),
-# se controla en .streamlit/config.toml (textColor + dataframeHeaderBackgroundColor).
 st.markdown("""<style>
-[data-testid="stMetric"] { background: #f3f4f6; border-radius: 10px; padding: 10px 14px; }
-[data-testid="stMetricValue"] { font-size: 1.45rem; }
-[data-testid="stMetricLabel"] p { font-size: .8rem; }
-[data-testid="stMetricDelta"] { font-size: .78rem; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+html, body, [class*="css"] { font-family: 'DM Sans', system-ui, sans-serif; }
+
+.stApp {
+  background: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, #0b1220 45%, #070b14 100%);
+  color: #e2e8f0;
+}
+[data-testid="stHeader"] { background: rgba(7,11,20,.6); }
+
+section[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
+  border-right: 1px solid rgba(148,163,184,.12);
+}
+section[data-testid="stSidebar"] * { color: #e2e8f0 !important; }
+section[data-testid="stSidebar"] .stCaption,
+section[data-testid="stSidebar"] label { color: #94a3b8 !important; }
+
+[data-testid="stMetric"] {
+  background: linear-gradient(145deg, rgba(30,41,59,.9), rgba(15,23,42,.95));
+  border: 1px solid rgba(56,189,248,.18);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+[data-testid="stMetricValue"] {
+  font-size: 1.5rem; font-family: 'JetBrains Mono', monospace; color: #f8fafc !important;
+}
+[data-testid="stMetricLabel"] p { font-size: .78rem; color: #94a3b8 !important; }
+
+h1, h2, h3, h4, h5, h6 { color: #f1f5f9 !important; letter-spacing: -0.02em; }
+.stMarkdown p, .stCaption, label { color: #cbd5e1 !important; }
+hr { border-color: rgba(148,163,184,.15) !important; }
+
+[data-testid="stDataFrame"] {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(148,163,184,.12);
+}
+
+.vt-hero {
+  position: relative; border-radius: 20px; padding: 22px 26px; margin: 0 0 18px 0;
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.14), rgba(167,139,250,.12) 45%, rgba(52,211,153,.08)),
+    linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.9));
+  border: 1px solid rgba(148,163,184,.16);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35); overflow: hidden;
+}
+.vt-hero-kicker {
+  font-size:.72rem; letter-spacing:.18em; font-weight:700;
+  color:#7dd3fc; text-transform:uppercase; margin-bottom:6px;
+}
+.vt-hero-title {
+  font-size:1.85rem; font-weight:700; color:#f8fafc; line-height:1.15; margin:0 0 6px 0;
+}
+.vt-hero-sub { font-size:.95rem; color:#94a3b8; margin:0; }
+.vt-badge {
+  display:inline-block; margin-top:10px; padding:4px 10px; border-radius:999px;
+  font-size:.72rem; font-weight:600; letter-spacing:.04em;
+  background:rgba(52,211,153,.12); color:#6ee7b7; border:1px solid rgba(52,211,153,.25);
+}
+.vt-side-brand {
+  padding: 6px 2px 14px 2px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(148,163,184,.12);
+}
+.vt-side-brand .t {
+  font-size:1.05rem; font-weight:700; color:#f8fafc !important; letter-spacing:-.02em;
+}
+.vt-side-brand .s { font-size:.75rem; color:#64748b !important; margin-top:2px; }
+
 </style>""", unsafe_allow_html=True)
 
 # =========================================================== datos
@@ -235,13 +294,26 @@ class _AggsDiferidos(dict):
     def __contains__(self, k):
         return dict.__contains__(self, k) or (k in self._pend and (AGGS / f"{k}.parquet").exists())
 
+def _ensure_demo_data():
+    """Si no hay agregados, genera datos sintéticos para demo pública."""
+    meta_p = AGGS / "_meta.json"
+    if meta_p.exists():
+        return
+    try:
+        from seed_demo_data import build as _seed
+        _seed()
+    except Exception as e:
+        st.error(f"No hay datos en `aggs/` y falló la demo: {e}")
+        st.stop()
+
 @st.cache_resource(show_spinner="Cargando agregados…")
 def load_all(version: str):
     """`version` no se usa dentro: existe para que Streamlit recargue
     cuando build_data.py reescribe aggs/."""
+    _ensure_demo_data()
     meta_p = AGGS / "_meta.json"
     if not meta_p.exists():
-        st.error(f"Falta `{meta_p}`.\n\nCorre primero: `python build_data.py --rebuild`")
+        st.error(f"Falta `{meta_p}`.\n\nCorre: `python seed_demo_data.py`")
         st.stop()
     meta = json.loads(meta_p.read_text(encoding="utf-8"))
     pi = AGGS / "pdc_ids.json"
@@ -337,16 +409,9 @@ def con_id(nombre: str) -> str:
         pass
     return f"{pid} · {nombre_str}"
 
-# ---------------------------------------------------- logo institucional
-@st.cache_data(show_spinner=False)
+# Logo deshabilitado en la versión pública del repositorio
 def logo_b64() -> str:
-    """elektra_logo.png como data-URI, para incrustarlo en el HTML del login,
-    del encabezado y del PDF del Resumen sin depender de rutas externas."""
-    import base64
-    p = BASE / "elektra_logo.png"
-    if not p.exists():
-        return ""
-    return "data:image/png;base64," + base64.b64encode(p.read_bytes()).decode("ascii")
+    return ""
 
 # ---------------------------------------------------- actualización semanal
 ESTADO = BASE / "estado.json"
@@ -751,7 +816,7 @@ def P(v) -> str:
 
 # --- formato contable: todo es gasto. Positivo = gasto -> rojo y entre
 # paréntesis; negativo = a favor -> carbón, sin signo.
-ROJO, CARBON = "#c0392b", "#2b2b2b"
+ROJO, CARBON = "#fb7185", "#e2e8f0"
 
 def MC(v) -> str:
     if v is None or pd.isna(v):
@@ -772,12 +837,16 @@ def _css_gasto(v) -> str:
 def _layout(fig, titulo, h):
     """Título arriba, leyenda debajo de él, gráfica con aire suficiente."""
     fig.update_layout(
-        height=h, template="plotly_white",
+        height=h, template="plotly_dark",
         title=dict(text=titulo, x=0, xanchor="left", y=0.97, yanchor="top",
-                   font=dict(size=22)) if titulo else None,
+                   font=dict(size=20, color="#e2e8f0", family="DM Sans")) if titulo else None,
         margin=dict(l=10, r=10, t=96 if titulo else 40, b=10),
-        legend=dict(orientation="h", y=1.0, yanchor="bottom", x=0, xanchor="left"),
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        legend=dict(orientation="h", y=1.0, yanchor="bottom", x=0, xanchor="left",
+                    font=dict(color="#cbd5e1")),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(15,23,42,0.35)",
+        font=dict(color="#cbd5e1", family="DM Sans"),
+        xaxis=dict(gridcolor="rgba(148,163,184,.12)", zerolinecolor="rgba(148,163,184,.2)"),
+        yaxis=dict(gridcolor="rgba(148,163,184,.12)", zerolinecolor="rgba(148,163,184,.2)"))
     return fig
 
 _CHART_N = {"i": 0}
@@ -999,196 +1068,145 @@ def fmt_tabla(df: pd.DataFrame, label_cols: list[str], index_first: bool = False
     return d.style.apply(lambda _: css, axis=None)
 
 _ARBOL_CSS = """<style>
-/* Encabezados de st.table (HTML real) en negritas — st.dataframe (canvas)
-   NO puede ser tocado por CSS, se controla vía .streamlit/config.toml. */
 div[data-testid="stTable"] thead tr th,
 .stTable thead tr th {
-    font-weight: 800 !important;
-    color: #111827 !important;
+    font-weight: 700 !important;
+    color: #e2e8f0 !important;
     font-size: 0.84rem !important;
 }
 
 .vt-tree-wrap {
-    overflow-x: auto;
-    overflow-y: auto;
-    max-height: 640px;
-    border: 1px solid #dcdfe4;
-    border-radius: 8px;
-    background: #ffffff;
+    overflow-x: auto; overflow-y: auto; max-height: 640px;
+    border: 1px solid rgba(148,163,184,.16);
+    border-radius: 14px;
+    background: rgba(15,23,42,.72);
     margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    box-shadow: 0 12px 32px rgba(0,0,0,.28);
 }
 .vt-tree {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: table; width: 100%; border-collapse: collapse;
+    font-size: 13.5px; font-family: 'DM Sans', system-ui, sans-serif;
+    color: #e2e8f0;
 }
-/* 2026-07-27: Nvo Plan oculto en pantalla -> 4 columnas menos por fila
-   (Nvo Plan, % del Total, vs Nvo Plan, vs Nvo Plan %). 14 - 4 = 10 sin
-   Forecast; 17 - 4 = 13 con Forecast. Debe coincidir con _get_arbol_head()/
-   _fila_arbol()/_fila_total_arbol(), que ya no emiten esas 4 columnas. */
 .vt-row {
     display: grid;
     grid-template-columns: 340px repeat(10, minmax(118px, 1fr));
-    min-width: 1520px;
-    align-items: center;
-    padding: 4px 0;
-    border-bottom: 1px solid #eef0f4;
-    background: #ffffff;
-    transition: background 0.15s ease;
+    min-width: 1520px; align-items: center; padding: 5px 0;
+    border-bottom: 1px solid rgba(148,163,184,.08);
+    background: transparent; transition: background 0.15s ease;
 }
 .vt-row.vt-fc {
     grid-template-columns: 340px repeat(13, minmax(118px, 1fr));
     min-width: 1856px;
 }
 .vt-row > span {
-    text-align: right;
-    white-space: nowrap;
-    overflow: visible;
-    padding: 2px 6px;
-    border-left: 1px solid #f2f4f7;
-    font-variant-numeric: tabular-nums;
+    text-align: right; white-space: nowrap; overflow: visible;
+    padding: 2px 6px; border-left: 1px solid rgba(148,163,184,.06);
+    font-variant-numeric: tabular-nums; color: #e2e8f0;
 }
 .vt-row > span:first-child {
-    text-align: left;
-    border-left: none;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /* 2026-07-27: columna "Concepto" fija al deslizar horizontalmente — el
-       árbol es más ancho que la pantalla y se perdía de vista la etiqueta al
-       revisar las columnas de la derecha. z-index por encima de las celdas
-       de datos; el fondo se repite por fila para que no se transparente el
-       contenido al pasar por debajo. */
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background: #ffffff;
-    box-shadow: 2px 0 3px -1px rgba(0,0,0,0.06);
+    text-align: left; border-left: none; font-weight: 500;
+    overflow: hidden; text-overflow: ellipsis;
+    position: sticky; left: 0; z-index: 1;
+    background: #0f172a; box-shadow: 2px 0 8px -2px rgba(0,0,0,.35);
 }
-/* la celda fija necesita el MISMO fondo que su fila en cada variante —
-   "background: inherit" no sirve porque .vt-row no es el elemento con el
-   fondo calculado. Se repite el color por cada clase que cambia el fondo. */
-.vt-head > span:first-child { background: #f1f3f6 !important; z-index: 3; }
-.vt-tot > span:first-child { background: #f1f3f6 !important; }
-.vt-nvl0 > span:first-child { background: #f8fafc; }
+.vt-head > span:first-child { background: #1e293b !important; z-index: 3; }
+.vt-tot > span:first-child { background: #1e293b !important; }
+.vt-nvl0 > span:first-child { background: #111827; }
 details[open] > summary .vt-row > span:first-child,
-.vt-row.vt-open > span:first-child { background: #eef4fc !important; }
+.vt-row.vt-open > span:first-child { background: #0c4a6e !important; }
 .vt-tree summary:hover .vt-row > span:first-child,
-.vt-row:hover > span:first-child { background: #f1f5f9 !important; }
+.vt-row:hover > span:first-child { background: #1e293b !important; }
 .vt-head {
-    position: sticky;
-    top: 0;
-    background: #f1f3f6 !important;
-    color: #111827 !important;
-    font-weight: 800 !important;
-    z-index: 2;
-    border-bottom: 2px solid #cfd4dc !important;
+    position: sticky; top: 0; background: #1e293b !important;
+    color: #7dd3fc !important; font-weight: 700 !important; z-index: 2;
+    border-bottom: 2px solid rgba(56,189,248,.35) !important;
 }
 .vt-head > span {
-    font-weight: 800 !important;
-    text-align: center !important;
-    color: #111827 !important;
+    font-weight: 700 !important; text-align: center !important; color: #7dd3fc !important;
 }
-.vt-head > span:first-child {
-    text-align: left !important;
-}
+.vt-head > span:first-child { text-align: left !important; }
 .vt-r26-head {
-    background-color: #fff59d !important;
-    color: #111827 !important;
-    font-weight: 800 !important;
+    background-color: rgba(56,189,248,.22) !important;
+    color: #e0f2fe !important; font-weight: 700 !important;
 }
 .vt-r26 {
-    background-color: #fffde7 !important;
-    font-weight: 600;
+    background-color: rgba(56,189,248,.08) !important; font-weight: 600;
 }
-.vt-var-zero { color: #2b2b2b; }
-.vt-var-pos { color: #78281f !important; font-weight: 600 !important; background: transparent !important; }
-.vt-var-neg { color: #145a32 !important; font-weight: 600 !important; background: transparent !important; }
-.vt-pos { color: #c0392b; font-weight: 600; }
-.vt-neg { color: #2b2b2b; }
+.vt-var-zero { color: #94a3b8; }
+.vt-var-pos { color: #fb7185 !important; font-weight: 600 !important; background: transparent !important; }
+.vt-var-neg { color: #34d399 !important; font-weight: 600 !important; background: transparent !important; }
+.vt-pos { color: #fb7185; font-weight: 600; }
+.vt-neg { color: #e2e8f0; }
 
 .vt-tot {
-    background: #f1f3f6 !important;
-    font-weight: 800 !important;
-    border-top: 2px solid #cfd4dc !important;
-    position: sticky;
-    bottom: 0;
+    background: #1e293b !important; font-weight: 700 !important;
+    border-top: 2px solid rgba(56,189,248,.3) !important;
+    position: sticky; bottom: 0;
 }
 
-/* Distinción visual por nivel — 2026-07-27: SIN barra de color lateral
-   (pedido del usuario). La jerarquía se lee por la sangría, el peso y el
-   tono del texto; el único color que queda es el resaltado de la rama
-   abierta. */
-.vt-nvl0 { background: #f8fafc; font-size: 14px; }
-.vt-nvl0 > span:first-child { font-weight: 700 !important; color: #0f172a; }
-
-.vt-nvl1 > span:first-child { font-weight: 600 !important; color: #1e293b; }
-.vt-nvl2 > span:first-child { font-weight: 600; color: #334155; }
-.vt-nvl3 > span:first-child { font-weight: 500; color: #475569; }
-.vt-nvl4 > span:first-child { font-weight: 500; color: #475569; }
+.vt-nvl0 { background: rgba(15,23,42,.5); font-size: 14px; }
+.vt-nvl0 > span:first-child { font-weight: 700 !important; color: #f8fafc; }
+.vt-nvl1 > span:first-child { font-weight: 600 !important; color: #e2e8f0; }
+.vt-nvl2 > span:first-child { font-weight: 600; color: #cbd5e1; }
+.vt-nvl3 > span:first-child { font-weight: 500; color: #94a3b8; }
+.vt-nvl4 > span:first-child { font-weight: 500; color: #94a3b8; }
 .vt-nvl5 > span:first-child { font-weight: 400; color: #64748b; }
 
-/* Resaltado de Rama Abierta / Seleccionada — solo fondo, sin borde lateral */
 details[open] > summary .vt-row,
-.vt-row.vt-open {
-    background: #eef4fc !important;
-}
+.vt-row.vt-open { background: rgba(14,116,144,.25) !important; }
 details[open] > summary .vt-row > span:first-child,
 .vt-row.vt-open > span:first-child {
-    font-weight: 800 !important;
-    color: #1a73e8 !important;
+    font-weight: 700 !important; color: #7dd3fc !important;
 }
-
 .vt-tree summary:hover .vt-row,
-.vt-row:hover { background: #f1f5f9 !important; }
+.vt-row:hover { background: rgba(30,41,59,.7) !important; }
 
-/* 2026-07-27: sin flechas ▸/▼ ni viñetas. En los árboles <details>
-   (Div/Terr, Cierres, Trimestres, PDF) el caret se sustituye por el MISMO
-   cuadro +/− del árbol perezoso, para que todos los drill-downs se vean y
-   se usen igual. Las hojas no llevan control, solo la sangría. */
 .vt-tree summary { list-style:none; cursor:pointer; }
 .vt-tree summary::-webkit-details-marker { display:none; }
 .vt-caret::before {
     content:'+'; display:inline-flex; align-items:center; justify-content:center;
     width:18px; height:18px; margin-right:7px; vertical-align:-4px;
-    border:1px solid #b8bfc8; border-radius:4px; background:#f1f3f6;
-    font-size:13px; font-weight:800; color:#2b2b2b; line-height:1; }
+    border:1px solid rgba(56,189,248,.35); border-radius:6px;
+    background:rgba(15,23,42,.9);
+    font-size:13px; font-weight:800; color:#7dd3fc; line-height:1;
+}
 details[open] > summary .vt-caret::before { content:'−'; }
 .vt-tree summary:hover .vt-caret::before {
-    background:#1a73e8; border-color:#1a73e8; color:#ffffff; }
+    background:#38bdf8; border-color:#38bdf8; color:#0f172a;
+}
 .vt-hoja::before { content:''; display:inline-block; width:18px; margin-right:7px; }
 .vt-tab { display:inline-block; width:12px; height:16px; position:relative; vertical-align:-3px; }
-.vt-tab::before { content:''; position:absolute; left:5px; top:0; bottom:0; border-left:1.5px solid #dcdfe4; }
-.vt-tab:last-child::after { content:''; position:absolute; left:5px; top:50%; width:6px; border-top:1.5px solid #dcdfe4; }
-/* Control para expandir una rama del árbol perezoso (TODOS los drill-downs).
-   2026-07-27: va SIN TEXTO — la columna es angosta y cualquier label se
-   comprimía hasta no leerse. Cuadro de tamaño fijo con borde y fondo; el
-   signo +/− se dibuja aquí con ::after, y el estado se distingue por la key
-   del widget (.st-key-_btn_abierto_* / .st-key-_btn_cerrado_*). */
+.vt-tab::before { content:''; position:absolute; left:5px; top:0; bottom:0; border-left:1.5px solid rgba(148,163,184,.25); }
+.vt-tab:last-child::after { content:''; position:absolute; left:5px; top:50%; width:6px; border-top:1.5px solid rgba(148,163,184,.25); }
+
 [class*="st-key-_btn_cerrado_"] button, [class*="st-key-_btn_abierto_"] button {
-    border:1px solid #b8bfc8 !important; background:#f1f3f6 !important;
-    border-radius:4px !important; padding:0 !important; min-height:0 !important;
+    border:1px solid rgba(56,189,248,.35) !important;
+    background:rgba(15,23,42,.9) !important;
+    border-radius:6px !important; padding:0 !important; min-height:0 !important;
     width:26px !important; height:26px !important; min-width:26px !important;
-    position:relative; overflow:hidden; }
+    position:relative; overflow:hidden;
+}
 [class*="st-key-_btn_cerrado_"] button p, [class*="st-key-_btn_abierto_"] button p,
 [class*="st-key-_btn_cerrado_"] button div, [class*="st-key-_btn_abierto_"] button div {
-    display:none !important; }
+    display:none !important;
+}
 [class*="st-key-_btn_cerrado_"] button::after,
 [class*="st-key-_btn_abierto_"] button::after {
     position:absolute; inset:0; display:flex; align-items:center;
     justify-content:center; font-size:17px; font-weight:800;
-    color:#2b2b2b; line-height:1; }
+    color:#7dd3fc; line-height:1;
+}
 [class*="st-key-_btn_cerrado_"] button::after { content:'+'; }
 [class*="st-key-_btn_abierto_"] button::after { content:'−'; }
 [class*="st-key-_btn_cerrado_"] button:hover, [class*="st-key-_btn_abierto_"] button:hover {
-    background:#1a73e8 !important; border-color:#1a73e8 !important; }
+    background:#38bdf8 !important; border-color:#38bdf8 !important;
+}
 [class*="st-key-_btn_cerrado_"] button:hover::after,
-[class*="st-key-_btn_abierto_"] button:hover::after { color:#ffffff; }
+[class*="st-key-_btn_abierto_"] button:hover::after { color:#0f172a; }
 div[data-testid="stHorizontalBlock"]:has(.vt-row) { margin-top:-0.35rem; align-items:center; }
 div[data-testid="stHorizontalBlock"]:has(.vt-row) div[data-testid="stElementContainer"] { margin:0; }
+
 </style>"""
 
 def _get_arbol_head(inc_fc: bool = False) -> str:
@@ -1557,9 +1575,9 @@ _KPI_CSS = """<style>
 .vt-kpi-sig .vt-kpi-et { display:block; font-size:.68rem; font-weight:600;
               color:#7a828d; text-transform:uppercase; letter-spacing:.05em;
               margin-bottom:2px; }
-.vt-sig-alza { color:#c0392b; }
-.vt-sig-baja { color:#1e7d43; }
-.vt-sig-cero { color:#5b6470; }
+.vt-sig-alza { color:#fb7185; }
+.vt-sig-baja { color:#34d399; }
+.vt-sig-cero { color:#94a3b8; }
 </style>"""
 
 def _senal(etiqueta: str, monto, pct) -> str:
@@ -1594,8 +1612,8 @@ _KPITBL_CSS = """<style>
                     line-height:1.2; display:block; }
 .vt-kpitbl .vt-ks { font-size:.74rem; font-weight:600; color:#5b6470;
                     display:block; margin-top:2px; }
-.vt-kpitbl .vt-kv.alza, .vt-kpitbl .vt-ks.alza { color:#c0392b; }
-.vt-kpitbl .vt-kv.baja, .vt-kpitbl .vt-ks.baja { color:#1e7d43; }
+.vt-kpitbl .vt-kv.alza, .vt-kpitbl .vt-ks.alza { color:#fb7185; }
+.vt-kpitbl .vt-kv.baja, .vt-kpitbl .vt-ks.baja { color:#34d399; }
 </style>"""
 
 def kpis_tabla(items: list) -> str:
@@ -1700,7 +1718,7 @@ def tablas_variaciones() -> None:
             st.caption("Sin comentarios.")
             return
         d = _parsear_notas(notas)
-        bg, fg = ("#eaf6ec", "#1e7d43") if positivo else ("#fbeeec", "#a93226")
+        bg, fg = ("rgba(16,185,129,.12)", "#34d399") if positivo else ("rgba(244,63,94,.12)", "#fb7185")
         css = pd.DataFrame("", index=d.index, columns=d.columns)
         css["Cuenta"] = f"font-weight:600;color:{fg}"
         css[["Monto", "%"]] = f"color:{fg};font-weight:600"
@@ -1738,12 +1756,12 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
        color:#2b2b2b; margin:0; padding:14px 18px; }
 h1 { font-size:1.5rem; margin:0 0 2px 0; color:#2b2b2b; }
 h2 { font-size:1.05rem; margin:20px 0 8px 0; color:#2b2b2b;
-     border-bottom:2px solid rgba(169,50,38,.30); padding-bottom:4px; }
+     border-bottom:2px solid rgba(56,189,248,.35); padding-bottom:4px; }
 h3 { font-size:.9rem; margin:12px 0 6px 0; color:#5b6470; }
 .enc { display:flex; align-items:center; gap:16px;
-       border-bottom:3px solid rgba(169,50,38,.30); padding-bottom:10px; margin-bottom:6px; }
+       border-bottom:3px solid rgba(56,189,248,.35); padding-bottom:10px; margin-bottom:6px; }
 .enc img { height:58px; }
-.kicker { font-size:.72rem; letter-spacing:.14em; font-weight:700; color:#a93226; }
+.kicker { font-size:.72rem; letter-spacing:.14em; font-weight:700; color:#0284c7; }
 .sub { font-size:.85rem; color:#5b6470; }
 table.dat { border-collapse:collapse; width:100%; font-size:.66rem; margin-bottom:10px; }
 table.dat th { background:#f1f3f6; color:#111827; font-weight:800; padding:5px 6px;
@@ -1770,8 +1788,7 @@ def _tabla_html_simple(sty) -> str:
 
 def html_resumen_pdf(x, gc_, arbol_html: str, periodo: str) -> str:
     """Documento imprimible de la pestaña Resumen."""
-    lg = logo_b64()
-    logo_html = f"<img src='{lg}' alt='Grupo Elektra'>" if lg else ""
+    logo_html = ""
     filtro = _desc_filtros()
     nota = (f"<div class='nofilt'>Vista filtrada — solo incluye: <b>{filtro}</b></div>"
             if filtro else "")
@@ -1799,13 +1816,13 @@ def html_resumen_pdf(x, gc_, arbol_html: str, periodo: str) -> str:
 
     return f"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
-<title>Resumen · Gasto Red de Grupo Elektra</title>
+<title>Resumen · Vista Territorio</title>
 <style>{_PDF_CSS}{_KPI_CSS.replace('<style>', '').replace('</style>', '')}
 {_ARBOL_CSS.replace('<style>', '').replace('</style>', '')}</style></head>
 <body onload="window.print()">
 <div class="enc">{logo_html}
-  <div><div class="kicker">GRUPO ELEKTRA · PLANEACIÓN FINANCIERA</div>
-    <h1>Gasto Red de Grupo Elektra</h1>
+  <div><div class="kicker">VISTA TERRITORIO · DASHBOARD FINANCIERO</div>
+    <h1>Resumen de gasto territorial</h1>
     <div class="sub">Resumen &nbsp;·&nbsp; {periodo} &nbsp;·&nbsp; cifras en millones de pesos</div>
   </div></div>
 {nota}
@@ -1820,47 +1837,19 @@ def html_resumen_pdf(x, gc_, arbol_html: str, periodo: str) -> str:
   Para guardarlo como PDF elige "Destino: Guardar como PDF" en el diálogo de impresión.</div>
 </body></html>"""
 
-# =========================================================== auth
-def check_pw(u: str, p: str) -> dict | None:
-    if not USERS_FILE.exists():
-        return None
-    users = json.loads(USERS_FILE.read_text(encoding="utf-8"))
-    rec = users.get(u)
-    if rec and rec["password"] == hashlib.sha256((SALT + p).encode()).hexdigest():
-        return {"username": u, "role": rec.get("rol", "user")}
-    return None
-
-if "user" not in st.session_state:
-    st.session_state.user = None
-
-if st.session_state.user is None:
-    _lg = logo_b64()
-    if _lg:
-        st.markdown(
-            f"<div style='text-align:center;padding:14px 0 6px 0'>"
-            f"<img src='{_lg}' alt='Grupo Elektra' style='height:110px'></div>",
-            unsafe_allow_html=True)
-    st.title("Vista Territorio")
-    st.caption("Grupo Elektra · Planeación Financiera")
-    with st.form("login"):
-        u = st.text_input("Usuario")
-        p = st.text_input("Contraseña", type="password")
-        if st.form_submit_button("Entrar", type="primary"):
-            r = check_pw(u, p)
-            if r:
-                st.session_state.user = r
-                st.rerun()
-            else:
-                st.error("Usuario o contraseña incorrectos")
-    st.stop()
+# =========================================================== acceso público (sin login)
+if "user" not in st.session_state or st.session_state.user is None:
+    st.session_state.user = {"username": "visitante", "role": "viewer"}
 
 # =========================================================== sidebar
 with st.sidebar:
-    st.markdown(f"**{st.session_state.user['username']}** · {st.session_state.user['role']}")
-    if st.button("Salir", key="btn_salir"):
-        st.session_state.user = None
-        st.rerun()
-    st.divider()
+    st.markdown(
+        """<div class='vt-side-brand'>
+          <div class='t'>◈ Vista Territorio</div>
+          <div class='s'>Tableros · alertas · demo pública</div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
     st.caption(f"Real hasta sem **{SMR}** · Plan a sem **{SMP}**")
     modo = st.radio("Filtrar por", ["Rango de semanas", "Mes", "Trimestre", "Semana individual"],
                     key="modo")
@@ -2015,40 +2004,26 @@ with st.sidebar:
         elif estado_sql == "desconocido":
             st.caption("No se pudo consultar SQL Server (¿VPN?)")
 
-        puede = st.session_state.user["role"] in ("admin", "supervisor")
-        cols = st.columns(2)
-        if cols[0].button("Actualizar", key="btn_upd",
-                          type="primary" if estado_sql == "nuevos" else "secondary",
-                          disabled=not puede,
-                          help="Extrae de SQL y recalcula los agregados (~10 min)"):
-            lanzar_actualizacion()
-            st.rerun()
-        if cols[1].button("Recargar", key="btn_reload", help="Vuelve a leer aggs/ del disco"):
+        if st.button("Recargar datos", key="btn_reload", help="Vuelve a leer aggs/ del disco"):
             st.cache_resource.clear()
             st.cache_data.clear()
             st.rerun()
-        if not puede:
-            st.caption("Solo admin/supervisor puede actualizar.")
+        st.caption("Modo demo/público: sin conexión a SQL Server.")
     st.divider()
     st.caption(f"Datos generados: {META.get('generado', '—')[:16].replace('T', ' ')}")
 
 R = dict(si=si, sf=sf, individual=ind)
 
-_LOGO = logo_b64()
-_LOGO_HDR = (f"<img src='{_LOGO}' alt='Grupo Elektra' "
-             f"style='height:62px;flex:0 0 auto'>") if _LOGO else ""
+_demo = bool(META.get("demo"))
 st.markdown(f"""
-<div style="border-bottom:3px solid rgba(169,50,38,.30); padding:2px 0 12px 0; margin-bottom:14px;
-            display:flex; align-items:center; gap:18px">
-  {_LOGO_HDR}
-  <div>
-    <div style="font-size:.85rem; letter-spacing:.14em; font-weight:700; color:#a93226">
-      GRUPO ELEKTRA · PLANEACIÓN FINANCIERA</div>
-    <div style="font-size:1.7rem; font-weight:800; color:#2b2b2b; line-height:1.25">
-      Gasto Red de Grupo Elektra</div>
-    <div style="font-size:.95rem; color:#5b6470">
-      Reporte Semanal &nbsp;·&nbsp; Semana {SMR} — 2026 &nbsp;·&nbsp; cifras en millones de pesos</div>
-  </div>
+<div class="vt-hero">
+  <div class="vt-hero-kicker">Vista Territorio · Analytics</div>
+  <div class="vt-hero-title">Dashboard de gasto territorial</div>
+  <p class="vt-hero-sub">
+    Drill-down · alertas · forecast &nbsp;·&nbsp; Semana {SMR} / 2026
+    &nbsp;·&nbsp; cifras en millones de pesos
+  </p>
+  {"<span class='vt-badge'>Datos demo sintéticos</span>" if _demo else "<span class='vt-badge'>Datos locales</span>"}
 </div>""", unsafe_allow_html=True)
 
 SECCIONES = ["Resumen", "Temporalidad", "Div / Terr", "Detalle Cuenta", "Detalle PDC",

@@ -2,6 +2,12 @@
 
 Dashboard financiero en **Streamlit** con **tableros interactivos**, drill-down territorial/contable y **alertas asistidas por IA** (riesgos, oportunidades y señales de seguimiento).
 
+## Demo pública
+
+- **Sin login** ni logo corporativo — cualquiera puede abrir el repo y ver el dashboard  
+- **Tema visual oscuro** nuevo (sin la paleta/reglas de formato anteriores)  
+- Si no hay `aggs/`, se generan **datos demo sintéticos** al arrancar (`seed_demo_data.py`)
+
 ## Qué incluye
 
 - Tableros: Real / Plan / Nvo Plan / Forecast de cierre  
@@ -15,7 +21,7 @@ Dashboard financiero en **Streamlit** con **tableros interactivos**, drill-down 
 
 - Streamlit, Plotly  
 - Polars, Pandas, DuckDB  
-- SQL Server (opcional, vía `pyodbc`)  
+- SQL Server (opcional, solo en entornos privados)
 
 ## Inicio rápido
 
@@ -24,14 +30,13 @@ cd dashboard_vista_territorio
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.ejemplo .env
-copy usuarios.ejemplo.json usuarios.json
 streamlit run app.py --server.port 8502
 ```
 
-Abre **http://localhost:8502**.
+Abre **http://localhost:8502** — entra directo al dashboard (sin contraseña).
 
-> Sin parquets/aggs completos (generados localmente o desde zips `App_y_Aggs`), algunas vistas pueden quedar vacías. Esos datos **no** van en git.
+> Primera ejecución: se crea `aggs/` con datos demo si no existe.  
+> Datos reales de negocio **no** se versionan en git.
 
 ## Actualización semanal (con SQL)
 
