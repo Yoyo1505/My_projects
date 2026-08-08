@@ -1,8 +1,46 @@
 # Cashi RAG
 
-Local **Retrieval-Augmented Generation** toolkit: index Markdown/Python, search with TF–IDF-style ranking, optional HTTP API, and a **Streamlit demo UI**.
+Local **Retrieval-Augmented Generation** for financial/code knowledge: indexing, search, optional numeric engine, HTTP API, **Streamlit UI**, and a **static HTML/JS** demo for GitHub Pages.
 
-## How to try it (browser demo)
+---
+
+## Two versions (both kept)
+
+| Version | Open |
+|---------|------|
+| **Static (no server)** | [GitHub Pages – Cashi](https://yoyo1505.github.io/My_projects/cashi/) · `../docs/cashi/index.html` |
+| **Streamlit** | `streamlit run app.py` |
+| **CLI** | `python rag/query.py "your question"` |
+| **Mappings** | [MAPPINGS.md](MAPPINGS.md) |
+| **Versions detail** | [VERSIONS.md](VERSIONS.md) |
+| **RAG guide** | [RAG_GUIDE.md](RAG_GUIDE.md) |
+
+---
+
+## 1) Static HTML/JS (GitHub Pages)
+
+```text
+../docs/cashi/
+├── index.html           # Browser UI + client-side TF–IDF
+└── data/chunks.json     # Exported chunks (no Python at runtime)
+```
+
+Enable Pages: repo **Settings → Pages → Branch `main` → `/docs`**.
+
+Refresh chunks after changing docs/code:
+
+```powershell
+# from Cashi RAG/
+python rag/indexer.py
+# from repo root
+python docs/_export_demo_data.py
+```
+
+---
+
+## 2) Streamlit + Python toolkit
+
+### Setup
 
 ```powershell
 cd "Cashi RAG"
@@ -12,41 +50,52 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open **http://localhost:8501** — no login.  
-First run builds `rag/index_store.json` automatically from `docs/` + source.
-
-## CLI (no UI)
+### CLI
 
 ```powershell
 python rag/indexer.py
 python rag/query.py "how does indexing work"
 python rag/server_api.py
-# then: http://localhost:8000/?q=how+does+indexing+work&mode=code
 ```
 
-## Structure
+### Structure
 
 ```text
 Cashi RAG/
-├── app.py                 # Streamlit demo (main entry for visitors)
+├── app.py
 ├── rag/
-│   ├── indexer.py         # Build local index
-│   ├── query.py           # Search + CLI
-│   ├── financial_rag.py   # Numeric Q&A (needs optional parquet aggs)
-│   ├── build_fast_json.py
-│   └── server_api.py      # HTTP API
+│   ├── indexer.py
+│   ├── query.py
+│   ├── financial_rag.py
+│   ├── server_api.py
+│   └── build_fast_json.py
 ├── docs/sample_knowledge.md
+├── MAPPINGS.md
+├── VERSIONS.md
+├── RAG_GUIDE.md
 ├── requirements.txt
 └── README.md
 ```
 
-## Why there was no “test” before
+### Stack
 
-After cleaning the monorepo, **Cashi** kept only the RAG library + CLI.  
-**Territory Dashboard** had Streamlit; Cashi did not — so visitors had no one-click UI.  
-`app.py` is the browser demo so anyone can try retrieval from this folder.
+Python, Streamlit, Polars, DuckDB (numeric path).
+
+---
+
+## What gets mapped?
+
+- **Documents → chunks** (Markdown headings / Python functions)  
+- **Query → ranked snippets** (TF–IDF style)  
+- **Natural language → entities** (division, territorio, grupo, CECO, week) when consolidado exists  
+- **Synonyms → account groups** (nómina, flete, renta, …)
+
+Full tables: **[MAPPINGS.md](MAPPINGS.md)**.
+
+---
 
 ## Notes
 
-- Index file `rag/index_store.json` is gitignored (rebuilt locally).
-- `financial_rag.py` needs `aggs/_consolidado.parquet` for number queries; **doc/code RAG works without it**.
+- `rag/index_store.json` is gitignored; rebuilt locally.  
+- Numeric answers need optional `aggs/_consolidado.parquet` (not required for doc/code demo).  
+- Static Pages demo never needs your PC online as a server.

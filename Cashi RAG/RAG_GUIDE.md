@@ -1,29 +1,44 @@
-# Guía del Sistema RAG Local (Retrieval-Augmented Generation)
+# Cashi RAG — Guide
 
-## Descripción
-El sistema RAG local permite realizar consultas de lenguaje natural sobre el código fuente, la documentación técnica, los manuales de usuario, las reglas de negocio y los esquemas de datos del proyecto **Dashboard Vista Territorio**.
+## Purpose
 
-Funciona 100% de manera local, utilizando indexación por fragmentos semánticos y recuperación híbrida basada en **BM25 / TF-IDF** con citación exacta de archivos y líneas.
+Cashi retrieves **relevant passages** from local documentation and code so you can ask operational/finance questions without hardcoding answers. Optionally, it answers **numeric** questions from pre-aggregated parquet data.
 
-## Estructura del RAG
-- `rag/indexer.py`: Extrae fragmentos de archivos `.md` y `.py`, limpia tokens en español, calcula frecuencias de términos y genera `rag/index_store.json`.
-- `rag/query.py`: Recibe una consulta, aplica ponderación BM25/IDF y devuelve los mejores fragmentos ordenados con enlaces markdown formateados.
+## Mental model
 
-## Cómo Usar el RAG en la Terminal
+```text
+Question
+   │
+   ├─► Code/Doc path:  tokenize → score chunks → show sources
+   │
+   └─► Financial path: detect entities (div/terr/grupo/ceco/week)
+                         → SQL-like query on consolidado
+                         → structured JSON answer
+```
+
+## Day-1 walkthrough (Streamlit)
+
+1. `pip install -r requirements.txt`  
+2. `streamlit run app.py`  
+3. Click an example or type *how does indexing work*  
+4. Expand raw hits to see file + score  
+
+## Day-1 walkthrough (static)
+
+1. Open https://yoyo1505.github.io/My_projects/cashi/  
+2. Search the same examples  
+3. No install, no Python  
+
+## Rebuild knowledge
+
+After editing `docs/` or `rag/*.py`:
 
 ```powershell
-# Reconstruir el índice
 python rag/indexer.py
-
-# Consultar el RAG desde consola
-python rag/query.py "formula de variaciones vs plan 2026"
+python docs/_export_demo_data.py   # from repo root — updates Pages payload
 ```
 
-## Ejemplo de Respuesta del RAG
-```markdown
-### Resultados RAG para: 'formula de variaciones vs plan 2026'
+## See also
 
-1. [docs/auditoria/reglas_negocio.md](file:///docs/auditoria/reglas_negocio.md#L22-L33) — Variaciones y Porcentajes (Score: 1.2758)
-- `vs Plan (Absoluta)` = `Real 2026 - Plan 2026`
-- `vs Plan (%)` = `(vs Plan Absoluta / |Plan 2026|) * 100`
-```
+- [MAPPINGS.md](MAPPINGS.md) — all maps  
+- [VERSIONS.md](VERSIONS.md) — Streamlit vs HTML  

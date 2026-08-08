@@ -1,42 +1,82 @@
 # Static demos (GitHub Pages)
 
-These demos run **in the browser only** (HTML + JavaScript).  
-No Python, Streamlit, or local server is required after Pages is enabled.
+Pure **HTML + JavaScript** demos. No Python process required after Pages is enabled.
 
-## URLs (after enabling Pages)
+These are **companions** to the full Streamlit apps in:
 
-Base: `https://yoyo1505.github.io/My_projects/`
+- `Territory Dashboard/` ([MAPPINGS](../Territory%20Dashboard/MAPPINGS.md) · [VERSIONS](../Territory%20Dashboard/VERSIONS.md))
+- `Cashi RAG/` ([MAPPINGS](../Cashi%20RAG/MAPPINGS.md) · [VERSIONS](../Cashi%20RAG/VERSIONS.md))
 
-| Demo | Path |
-|------|------|
-| Landing | `/` or `/index.html` |
-| Territory Dashboard | `/territory/` |
-| Cashi RAG | `/cashi/` |
+---
 
 ## Enable GitHub Pages
 
-1. Open the repo on GitHub → **Settings** → **Pages**
-2. **Source**: Deploy from a branch
-3. **Branch**: `main`
-4. **Folder**: `/docs`
-5. Save — wait 1–2 minutes, then open the URL above
+1. Repo **Settings → Pages**  
+2. Source: **Deploy from a branch**  
+3. Branch: **`main`**  
+4. Folder: **`/docs`**  
+5. Save  
 
-## Refresh demo data (maintainers)
+URLs:
 
-From the repo root (local Python still used only to rebuild JSON assets):
+| Page | Path |
+|------|------|
+| Landing | https://yoyo1505.github.io/My_projects/ |
+| Territory | https://yoyo1505.github.io/My_projects/territory/ |
+| Cashi | https://yoyo1505.github.io/My_projects/cashi/ |
 
-```powershell
-# Rebuild Territory Dashboard/aggs if needed, then:
-python -c "exec(open('docs/_export_demo_data.py', encoding='utf-8').read())"
+---
+
+## Layout
+
+```text
+docs/
+├── index.html                 # Landing (links both demos)
+├── _export_demo_data.py       # Rebuild JSON from Python projects
+├── territory/
+│   ├── index.html
+│   └── data/demo.json         # Snapshot of synthetic finance data
+└── cashi/
+    ├── index.html
+    └── data/chunks.json       # Slim RAG corpus for browser search
 ```
 
-Or re-run the export commands documented in the commit history / maintain scripts.
+---
 
-## Note
+## Mapping: Streamlit data → static JSON
 
-Full Python apps remain in:
+| Streamlit source | Static field |
+|------------------|--------------|
+| `aggs/global` YTD | `kpis`, `weekly` |
+| `aggs/division` | `by_division`, `hierarchy` |
+| `aggs/territorio` | `hierarchy[].children` |
+| `aggs/grupo_cuentas` | `by_grupo` |
+| `aggs/cuentas` | `accounts` |
+| `aggs/seguimiento_demo.json` | `cierres` |
+| `aggs/riesgos.json` | `riesgos` |
+| Cashi `index_store.json` chunks | `chunks.json` |
 
-- `Territory Dashboard/` (Streamlit)
-- `Cashi RAG/` (Streamlit + CLI)
+Full semantic maps live in each project’s **MAPPINGS.md**.
 
-Static pages are the **public, always-on** demos.
+---
+
+## Refresh after code/data changes
+
+```powershell
+# From repository root
+python "Territory Dashboard\seed_demo_data.py"   # if needed
+python "Cashi RAG\rag\indexer.py"                # if docs/code changed
+python docs\_export_demo_data.py
+```
+
+Commit and push `docs/` so GitHub Pages updates.
+
+---
+
+## Local preview
+
+```powershell
+cd docs
+python -m http.server 8080
+# http://localhost:8080
+```
