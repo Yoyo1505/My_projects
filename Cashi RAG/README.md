@@ -1,71 +1,45 @@
-# Cashi — Sistema RAG financiero
+# Cashi RAG
 
-**Cashi** es un sistema de **RAG (Retrieval-Augmented Generation)** orientado a asistencia financiera: indexación local de contexto, consulta semántica y respuestas ancladas a documentos/datos del dominio, sin depender de hardcode de cifras en la capa de presentación.
+Local **Retrieval-Augmented Generation** toolkit for financial/code knowledge: TF–IDF style indexing, CLI query, and a tiny HTTP API.
 
-## Qué resuelve
+## Structure
 
-- Recuperación de contexto financiero relevante (índices locales)
-- Consulta vía API / scripts (`rag/query.py`, `rag/server_api.py`)
-- Construcción de índices rápidos (`rag/build_fast_json.py`, `rag/indexer.py`)
-- Integración con flujos de dashboard y agregados precomputados
-
-## Stack
-
-- Python  
-- Motor RAG local (`rag/financial_rag.py`)  
-- Streamlit / HTML asistentes (`rag_asistente_*.html`)  
-- Polars / DuckDB / agregados en `aggs/` (datos pesados **fuera de git**)
-
-## Estructura
-
-```
-Cashi/
-├── rag/                    # Núcleo RAG
-│   ├── financial_rag.py
-│   ├── indexer.py
-│   ├── query.py
-│   ├── server_api.py
-│   └── build_fast_json.py
-├── app.py                  # UI asociada
-├── app/services/           # Cálculos y motor de datos
-├── aggs/                   # Metadatos / índices (parcial)
-├── docs/
-├── RAG_GUIDE.md
-├── ARCHITECTURE.md
+```text
+Cashi RAG/
+├── rag/
+│   ├── indexer.py         # Build local index from .md / .py
+│   ├── query.py           # Search & CLI
+│   ├── financial_rag.py   # Numeric Q&A over parquet aggs (optional)
+│   ├── build_fast_json.py # Fast JSON helpers for aggregates
+│   └── server_api.py      # Simple HTTP API
+├── docs/                  # Sample knowledge base
 ├── requirements.txt
-├── .env.ejemplo
-└── DATA.md                 # Cómo montar secretos y datos locales
+└── README.md
 ```
 
-## Inicio rápido
+## Setup
 
 ```powershell
 cd "Cashi RAG"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.ejemplo .env
-# Coloca índices/aggs locales según DATA.md
-streamlit run app.py --server.port 8502
 ```
 
-## Documentación
+## Run
 
-| Archivo | Contenido |
-|---------|-----------|
-| [RAG_GUIDE.md](RAG_GUIDE.md) | Guía del asistente RAG |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Componentes del sistema |
-| [SECURITY.md](SECURITY.md) | Operación local-first y buenas prácticas |
-| [DATA.md](DATA.md) | Secretos y datasets fuera del repo |
-| [INSTALLATION.md](INSTALLATION.md) | Instalación |
+```powershell
+# 1) Build index over docs + source
+python rag/indexer.py
 
-## Datos y secretos (fuera del repositorio)
+# 2) Ask a question
+python rag/query.py "how does the indexer chunk markdown"
 
-No se versionan:
+# 3) Optional HTTP API
+python rag/server_api.py
+```
 
-- `.env` (SQL / credenciales)
-- `usuarios.json`
-- Parquets y catálogos grandes
-- Zips `*_App_y_Aggs`
+## Notes
 
-Ver [DATA.md](DATA.md).
+- Index is written to `rag/index_store.json` (gitignored).
+- `financial_rag.py` expects optional `aggs/_consolidado.parquet` for numeric queries; without it, code/doc RAG still works.

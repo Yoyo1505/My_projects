@@ -1,33 +1,19 @@
 # My Projects – Data Analysis, Finance, AI Dashboards & RAG
 
-Portfolio of applied Python projects: data analysis, financial risk, quantitative modeling, **AI-powered dashboards**, and **RAG** systems.
+Lean portfolio: only the code and data needed to run each project.
 
 ## Projects
 
-| Project | Type | Description |
-|---------|------|-------------|
-| **[Cashi RAG](Cashi%20RAG/)** | **RAG system** | Local financial assistant: indexing, retrieval, query API |
-| **[Territory Dashboard](Territory%20Dashboard/)** | **Dashboards + AI alerts** | Streamlit territorial/accounting drill-down, ETL, risk/opportunity alerts |
-| **[Financial Risk Analysis](Financial%20Risk%20Analysis/)** | Risk | VaR, Monte Carlo, stress testing |
-| **[Loan Assessment System](Loan%20Assessment%20System/)** | Credit | Loan approval analysis and scoring workflows |
-| **[Leverage Buyout Model](Leverage%20Buyout%20Model/)** | Corporate finance | LBO case study |
-| **[Quantum Computing](Quantum%20Computing/)** | Experimental | Qiskit / PennyLane starters |
+| Project | Type | Run |
+|---------|------|-----|
+| **[Cashi RAG](Cashi%20RAG/)** | Local RAG | `python rag/indexer.py` then `python rag/query.py "..."` |
+| **[Territory Dashboard](Territory%20Dashboard/)** | Streamlit dashboard | `streamlit run app.py` |
+| **[Financial Risk Analysis](Financial%20Risk%20Analysis/)** | Risk notebooks | open `notebooks/` |
+| **[Loan Assessment System](Loan%20Assessment%20System/)** | Credit ML notebook | open `notebooks/` |
+| **[Quantum Computing](Quantum%20Computing/)** | Quantum starters | `python qiskit_pennylane_starter.py` |
 
-## Repository structure
+## Notes
 
-Each folder is a standalone project (README, code, dependencies).
-
-**Secrets and production data are not committed.** Use each project's `DATA.md` / `.env.example` when needed.
-
-## Stack
-
-- Python, pandas, numpy, polars, duckdb  
-- Streamlit, Plotly  
-- Local RAG / assistants  
-- Jupyter, Git  
-
-## About
-
-Built for roles in Data Analysis, Analytics Engineering, Financial Risk, and AI applied to finance.
-
-See **[PROJECT IDEAS.md](PROJECT%20IDEAS.md)** for the next portfolio builds (dashboard modules and full projects).
+- No production secrets or SQL pipelines in this repo.
+- Territory Dashboard uses **synthetic demo data** via `seed_demo_data.py`.
+- More build ideas: [PROJECT IDEAS.md](PROJECT%20IDEAS.md).

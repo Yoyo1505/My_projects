@@ -425,28 +425,13 @@ def leer_estado() -> dict | None:
         return None
 
 def lanzar_actualizacion():
-    """Corre actualizar.py en segundo plano; la app sigue usable mientras tanto."""
-    import subprocess
-    creation = subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0
-    subprocess.Popen([sys.executable, str(BASE / "actualizar.py")], cwd=BASE,
-                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                     creationflags=creation)
+    """No-op in public demo (SQL pipeline removed)."""
+    return None
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def hay_datos_nuevos(_v: str) -> str:
-    """Pregunta a SQL Server si cambiaron los datos. Cacheado 1 hora.
-
-    Antes era ttl=300 (5 min). Los datos son semanales: consultar SQL cada
-    5 minutos lanzaba un subproceso constante sin aportar nada. El botón
-    "Refrescar estado" del sidebar sigue permitiendo forzar la consulta.
-    Devuelve 'nuevos' | 'al_dia' | 'desconocido' (nunca miente si falla la red)."""
-    import subprocess
-    try:
-        r = subprocess.run([sys.executable, str(BASE / "actualizar.py"), "--check"],
-                           cwd=BASE, capture_output=True, timeout=90)
-        return {0: "nuevos", 1: "al_dia"}.get(r.returncode, "desconocido")
-    except Exception:
-        return "desconocido"
+    """SQL checks disabled in public demo."""
+    return "desconocido"
 
 # =========================================================== cálculo
 def _medidas(d: dict, total_r26: float = 0.0, total_r25: float = 0.0, total_p26: float = 0.0,

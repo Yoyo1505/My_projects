@@ -1,8 +1,0 @@
-﻿{
-  "demo_admin": {
-    "password": "REEMPLAZAR_CON_HASH_SHA256",
-    "rol": "admin",
-    "creado": "2026-01-01",
-    "allowed_reports": []
-  }
-}

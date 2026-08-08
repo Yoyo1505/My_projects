@@ -1,67 +1,32 @@
-# Dashboard Territory Dashboard — Tableros y alertas con IA
+# Territory Dashboard
 
-Dashboard financiero en **Streamlit** con **tableros interactivos**, drill-down territorial/contable y **alertas asistidas por IA** (riesgos, oportunidades y señales de seguimiento).
+Public **Streamlit** demo: territorial financial drill-down, KPIs, charts, and AI-style variance notes on synthetic data.
 
-## Demo pública
+## Structure
 
-- **Sin login** ni logo corporativo — cualquiera puede abrir el repo y ver el dashboard  
-- **Tema visual oscuro** nuevo (sin la paleta/reglas de formato anteriores)  
-- Si no hay `aggs/`, se generan **datos demo sintéticos** al arrancar (`seed_demo_data.py`)
+```text
+Territory Dashboard/
+├── app.py                 # Streamlit app
+├── seed_demo_data.py      # Synthetic aggregates (created under aggs/)
+├── requirements.txt
+├── .streamlit/config.toml
+└── README.md
+```
 
-## Qué incluye
-
-- Tableros: Real / Plan / Nvo Plan / Forecast de cierre  
-- Jerarquía territorial: Agrupa 1 → División → Territorio → Zona → Región → PDC  
-- Jerarquía contable: Agrupa 1 → Grupo de cuentas → Cuentas → PosPre  
-- Pipeline ETL semanal (`extraer_sql.py` → `build_data.py` → `actualizar.py`)  
-- Alertas y módulo de riesgos/oportunidades  
-- Pruebas de integridad de drill-down (`tests/`)
-
-## Stack
-
-- Streamlit, Plotly  
-- Polars, Pandas, DuckDB  
-- SQL Server (opcional, solo en entornos privados)
-
-## Inicio rápido
+## Setup
 
 ```powershell
-cd Territory Dashboard
+cd "Territory Dashboard"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-streamlit run app.py --server.port 8502
+streamlit run app.py
 ```
 
-Abre **http://localhost:8502** — entra directo al dashboard (sin contraseña).
+Open **http://localhost:8501** — no login.
 
-> Primera ejecución: se crea `aggs/` con datos demo si no existe.  
-> Datos reales de negocio **no** se versionan en git.
+On first run, if `aggs/` is missing, `seed_demo_data.py` generates demo data automatically.
 
-## Actualización semanal (con SQL)
+## Stack
 
-```powershell
-python actualizar.py
-python actualizar.py --force
-python build_data.py --aggs-only
-```
-
-## Documentación
-
-| Archivo | Contenido |
-|---------|-----------|
-| [MANUAL_USUARIO.md](MANUAL_USUARIO.md) | Uso del tablero |
-| [MANUAL_ACTUALIZACION.md](MANUAL_ACTUALIZACION.md) | ETL y refresh |
-| [MANUAL_TECNICO.md](MANUAL_TECNICO.md) | Arquitectura técnica |
-| [PLAN_RAG_ALERTAS.md](PLAN_RAG_ALERTAS.md) | Alertas / IA |
-| [DATA.md](DATA.md) | Datos y secretos fuera del repo |
-
-## Datos fuera del repositorio
-
-Mantén fuera de git (y de esta carpeta en GitHub):
-
-- `.env`, `usuarios.json`
-- Parquets, catálogo de estructura, respaldos
-- Zips `*_App_y_Aggs`
-
-Ver [DATA.md](DATA.md).
+Streamlit, Polars, Pandas, Plotly.
