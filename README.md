@@ -33,6 +33,7 @@ Local static preview: open `docs/index.html` or `python -m http.server` inside `
 | **[Financial Risk Analysis](Financial%20Risk%20Analysis/)** | Risk notebooks | README in folder |
 | **[Loan Assessment System](Loan%20Assessment%20System/)** | Credit ML notebook + CSV | README in folder |
 | **[Quantum Computing](Quantum%20Computing/)** | Qiskit / PennyLane starter | README in folder |
+| **[LLM Experiment](LLM%20Experiment/)** | LLM support-agent graph: control/specialist/model/guardrail planes, tool calling, deterministic guardrails, iterated eval loop | README in folder |
 
 Static site sources live under **[docs/](docs/)** (see [docs/README.md](docs/README.md)).
 

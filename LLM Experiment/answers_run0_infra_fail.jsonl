@@ -1,0 +1,10 @@
+{"id": "v01", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v02", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v03", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v04", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v05", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v06", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v07", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v08", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v09", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
+{"id": "v10", "route": "policy", "answer": "Error: Unable to connect to local Ollama server at http://localhost:11434/api/chat. Please ensure Ollama is running and model 'llama3.1:8b' is available."}
