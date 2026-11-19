@@ -1,0 +1,31 @@
+{
+  "_nota": "Léxico de Cashi. Clave = término canónico que el motor ya entiende. Valores = formas en que el usuario lo escribe. Se compara sobre texto normalizado (sin acentos, minúsculas, sin puntuación). Agregar una variante es editar este archivo, no el código. No poner variantes que incluyan 'vs' (las rutas de variación lo usan).",
+  "ceco": [
+    "centros de costos", "centros de costo", "centro de costos", "centro de costo",
+    "centros costo", "centro costo", "cecos"
+  ],
+  "sobregasto": [
+    "sobre gasto", "sobregastos", "sobre gastos", "sobreconsumo", "sobre consumo",
+    "gasto excedido", "excedido", "excedidos", "se pasaron del plan", "se pasaron del presupuesto",
+    "se paso del plan", "se paso del presupuesto", "pasamos del plan", "pasamos del presupuesto",
+    "pasaron del plan", "pasaron del presupuesto", "por encima del plan", "arriba del plan",
+    "rebasaron el plan", "excedieron el plan"
+  ],
+  "ahorro": [
+    "ahorros", "ahorramos", "ahorrado", "ahorraron", "menos gasto", "gasto menor",
+    "por debajo del plan", "debajo del plan", "bajo el plan", "bajo plan"
+  ],
+  "variacion": [
+    "variaciones", "varie", "varió", "vario", "variaron", "desviacion", "desviaciones",
+    "desvio", "desvie", "desviaron", "diferencia", "diferencias"
+  ],
+  "plan": [
+    "presupuesto", "presupuestado", "presupuestados", "ppto"
+  ],
+  "aa": [
+    "ano anterior", "anio anterior", "año anterior", "ano pasado", "anio pasado", "año pasado"
+  ],
+  "forecast": [
+    "pronostico", "pronosticado"
+  ]
+}

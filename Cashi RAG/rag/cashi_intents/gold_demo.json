@@ -1,0 +1,125 @@
+{
+  "_nota": "Conjunto de prueba sintetico (plantillas sobre las entidades de seed_demo_data.py). Sustituye al conjunto con preguntas reales, que no se publica.",
+  "casos": [
+    {
+      "q": "dame el gasto de gastos de nomina",
+      "intencion": "gasto_total"
+    },
+    {
+      "q": "cuanto se gasto en renta y servicios",
+      "intencion": "gasto_total"
+    },
+    {
+      "q": "gasto total de direccion sur",
+      "intencion": "gasto_total"
+    },
+    {
+      "q": "dame el gasto de contraloria a",
+      "intencion": "gasto_total"
+    },
+    {
+      "q": "cual es el real 2026 de territorio jalisco",
+      "intencion": "gasto_total"
+    },
+    {
+      "q": "top 5 territorios por gasto",
+      "intencion": "gasto_ranking"
+    },
+    {
+      "q": "ranking de divisiones por gasto",
+      "intencion": "gasto_ranking"
+    },
+    {
+      "q": "que grupo de cuentas gasta mas",
+      "intencion": "gasto_ranking"
+    },
+    {
+      "q": "cuales son los 3 territorios con mayor gasto",
+      "intencion": "gasto_ranking"
+    },
+    {
+      "q": "top 5 grupos de cuentas por gasto",
+      "intencion": "gasto_ranking"
+    },
+    {
+      "q": "ranking de variaciones vs plan por division",
+      "intencion": "variacion_ranking"
+    },
+    {
+      "q": "top 5 variaciones vs plan por territorio",
+      "intencion": "variacion_ranking"
+    },
+    {
+      "q": "que territorios se desviaron mas del plan",
+      "intencion": "variacion_ranking"
+    },
+    {
+      "q": "ranking de desviacion contra plan de contraloria b",
+      "intencion": "variacion_ranking"
+    },
+    {
+      "q": "top 3 grupos de cuentas con mayor sobregasto",
+      "intencion": "variacion_ranking"
+    },
+    {
+      "q": "como va direccion norte contra el plan",
+      "intencion": "variacion_total"
+    },
+    {
+      "q": "variacion vs plan de territorio jalisco",
+      "intencion": "variacion_total"
+    },
+    {
+      "q": "cuanto nos desviamos del plan en mantenimiento",
+      "intencion": "variacion_total"
+    },
+    {
+      "q": "variacion contra presupuesto de contraloria a",
+      "intencion": "variacion_total"
+    },
+    {
+      "q": "como se desvio territorio peninsula vs plan",
+      "intencion": "variacion_total"
+    },
+    {
+      "q": "cuantos territorios tiene direccion sur",
+      "intencion": "estructura"
+    },
+    {
+      "q": "que territorios tiene direccion norte",
+      "intencion": "estructura"
+    },
+    {
+      "q": "que cuentas tiene el grupo mantenimiento",
+      "intencion": "estructura"
+    },
+    {
+      "q": "que grupos de cuentas existen",
+      "intencion": "estructura"
+    },
+    {
+      "q": "cuantas divisiones hay",
+      "intencion": "estructura"
+    },
+    {
+      "q": "gasto de gastos de nomina por semana de direccion centro",
+      "intencion": "desglose_dimension"
+    },
+    {
+      "q": "dame el gasto por territorio de direccion sur",
+      "intencion": "desglose_dimension"
+    },
+    {
+      "q": "desglose del gasto de contraloria a por grupo de cuentas",
+      "intencion": "desglose_dimension"
+    },
+    {
+      "q": "gasto de fletes y transportes por semana",
+      "intencion": "desglose_dimension"
+    },
+    {
+      "q": "gasto por division de publicidad",
+      "intencion": "desglose_dimension"
+    }
+  ]
+}

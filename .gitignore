@@ -19,3 +19,17 @@ aggs/
 .DS_Store
 Thumbs.db
 *.zip
+
+# Cached datasets, generated output, secrets
+F1 Las Vegas Predictor/data/
+NFL Moneyball/data/
+F1 Las Vegas Predictor/prediction.csv
+*key*.txt
+.env*
+.claude/
+
+# Local-only knowledge and real-question sets
+*.local.md
+*.local.json
+Sparse Index Tracking/data/
+Quantum Portfolio Selection/data/

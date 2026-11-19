@@ -20,7 +20,7 @@ Work split (two AI coding tools, running concurrently in separate visible termin
 ## [07:56] Prompt sent to agy (interactive window)
 
 ```
-Project folder: C:\Users\jorch\Downloads\Projects\LLM seezle
+Project folder: <repo>/LLM Experiment
 This is a real take-home for a job interview (SplitWave AI Engineer). Read PROMPT.md
 in that folder first -- it is the full brief and overrides anything below if they
 conflict. A second AI tool (Grok Build) is concurrently writing retrieval.py and
@@ -90,7 +90,7 @@ end-to-end (e.g. because Ollama wasn't ready yet).
 ## [07:56] Prompt sent to grok (interactive window)
 
 ```
-Project folder: C:\Users\jorch\Downloads\Projects\LLM seezle
+Project folder: <repo>/LLM Experiment
 This is a real take-home for a job interview (SplitWave AI Engineer). Read PROMPT.md
 in that folder first -- it is the full brief and overrides anything below if they
 conflict. A second AI tool (Claude/agy) is concurrently writing orders_store.py,

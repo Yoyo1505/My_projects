@@ -1,0 +1,9 @@
+numpy>=2.5,<3
+scipy>=1.18
+matplotlib>=3.10
+networkx>=3.6
+qiskit>=2.5
+qiskit-aer>=0.17
+nbformat>=5.10
+nbconvert>=7.16
+ipykernel>=6.30

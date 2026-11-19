@@ -1,0 +1,94 @@
+{
+  "_nota": "Ejemplos de entrenamiento del clasificador de intenciones de Cashi. Clave = intención. Agregar frases reales (de feedback o de preguntas no entendidas) es editar este archivo; no hace falta tocar código ni volver a escribir reglas. Reentrenar con: python -m rag.cashi_intents.entrenar",
+  "variacion_ranking": [
+    "cual es la cuenta con mas ahorro vs plan",
+    "dame los 5 centros de costos con mas sobre gasto",
+    "cuales territorios tienen mas ahorro vs plan",
+    "que regiones se pasaron del plan",
+    "top 3 cuentas que mas ahorraron contra el presupuesto",
+    "los pdv con mayor sobreconsumo en la semana 20",
+    "cuales divisiones tienen mayor variacion vs año anterior",
+    "que zonas tuvieron mas ahorro",
+    "ranking de cecos por desviacion contra el plan",
+    "quienes se pasaron del presupuesto en la division norte",
+    "las 10 cuentas con menos gasto vs plan",
+    "cuales son los grupos de cuentas que mas se pasaron del plan",
+    "mayores sobregastos por territorio",
+    "cinco pdv que mas excedieron el plan",
+    "cuales cuentas se pasaron mas del plan",
+    "que grupos de cuentas ahorraron mas",
+    "top diez centros de costo con mayor variacion",
+    "cuales son las regiones con menos ahorro"
+  ],
+  "variacion_total": [
+    "cuanto ahorramos vs plan en nomina",
+    "cuanto varió la division norte contra el año anterior",
+    "como se desvio el territorio jalisco vs plan",
+    "cual es la variacion del pdv 6031 vs plan",
+    "cuanto nos pasamos del presupuesto en renta",
+    "diferencia vs plan de la division centro",
+    "cuanto es la variacion vs año pasado",
+    "cuanto ahorramos en gastos de operacion",
+    "estamos arriba o abajo del plan en la division sur",
+    "variacion de real contra plan del territorio metro norte"
+  ],
+  "gasto_ranking": [
+    "que ceco tiene mas gasto de nomina",
+    "cual es el pdv con mayor gasto",
+    "top 5 cuentas por gasto",
+    "que cuenta gasta mas en la division norte",
+    "los centros de costo con mas gasto acumulado",
+    "cuales cuentas consumen mas dinero",
+    "que territorio gasta mas",
+    "dame las 3 divisiones que mas gastan"
+  ],
+  "desglose_dimension": [
+    "gasto por territorio",
+    "dame el gasto de la division norte por zona",
+    "desglosa el gasto de nomina por region",
+    "gasto por semana de la division sur",
+    "dame las zonas en el territorio guerrero",
+    "gasto mensual por division"
+  ],
+  "gasto_total": [
+    "cuanto es el gasto real 2026 de la cuenta renta luz y telefono",
+    "total de gasto del territorio chihuahua",
+    "suma del real de la division sur",
+    "cuanto llevo gastado en el ceco 300123",
+    "cuanto gastamos en el territorio jalisco este año",
+    "gasto acumulado de servicios administrativos",
+    "monto total de gastos de operacion en la division centro",
+    "cuanto suman los gastos de personal de la division norte",
+    "gasto del pdv 4102 acumulado",
+    "cual es el real 2026 de la contraloria alfa",
+    "cuanto fue el gasto de mantenimiento en el territorio bajio",
+    "total gastado en gastos extraordinarios"
+  ],
+  "estructura": [
+    "que territorios tiene la division norte",
+    "a que division pertenece el ceco 238139",
+    "cuantos pdv tiene el territorio jalisco",
+    "que cuentas tiene gastos de operacion",
+    "cuantas zonas hay en el territorio guerrero",
+    "que divisiones componen la direccion",
+    "que pdv hay en el territorio metro norte",
+    "cuantas divisiones hay",
+    "que grupos de cuentas existen"
+  ],
+  "alertas": [
+    "alertas de sobregasto",
+    "que grupos aumentaron esta semana",
+    "hay anomalias en la division centro",
+    "senales de sobregasto de la semana 38",
+    "que ceco tuvo un aumento inusual"
+  ],
+  "tendencia": [
+    "tendencia semanal de la division sur",
+    "como evoluciono el gasto por mes",
+    "grafica del gasto semana a semana",
+    "comportamiento mensual de nomina"
+  ],
+  "conversacional": [
+    "hola", "gracias", "que puedes hacer", "ayuda", "como te llamas", "buenos dias"
+  ]
+}

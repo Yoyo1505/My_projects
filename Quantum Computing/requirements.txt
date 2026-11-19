@@ -1,4 +1,0 @@
-numpy
-pennylane
-qiskit
-qiskit-aer
