@@ -1,122 +1,34 @@
-# Applied Mathematics Portfolio: Finance, AI, and Quantum Computing
+# Applied AI & Quantitative Portfolio
 
-**Author**: Applied Mathematician  
-**Repository**: Portfolio Projects 2026  
-**License**: MIT
+Applied AI engineering projects across GenAI, predictive ML, scientific simulation and quantitative finance. Every project folder follows the same README format: **Problem → Approach → Results → Run → Stack → Limits & security**.
 
----
+**Target roles:** Forward Deployed Engineer · Applied AI Engineer
 
-## 🎯 Overview
+## Projects
 
-This repository showcases rigorous implementations of cutting-edge algorithms across four domains:
+| Project | Domain | Technique | Status |
+|---|---|---|---|
+| [Cashi RAG](Cashi%20RAG/) | GenAI / RAG | Hybrid retrieval, numeric engine, HTTP API, Streamlit + static demo | Live demo |
+| [LLM Experiment](LLM%20Experiment/) | GenAI / agents | Multi-plane graph agent, router, verifier, evals, authorization tests | Done |
+| [F1 Las Vegas Predictor](F1%20Las%20Vegas%20Predictor/) | Sports ML | LightGBM win probabilities, season-wise backtest | New |
+| [NFL Moneyball](NFL%20Moneyball/) | Sports ML | EPA ridge model vs market, value over replacement | New |
+| [Optogenetics Neuron Simulation](Optogenetics%20Neuron%20Simulation/) | Scientific simulation | Hodgkin–Huxley + ChR2 photocycle, ABC inference | New |
+| [Financial Risk Analysis](Financial%20Risk%20Analysis/) | Quant finance | VaR/CVaR, EWMA Monte Carlo, Kupiec/Christoffersen backtests | Updated |
+| [Loan Assessment System](Loan%20Assessment%20System/) | Credit risk | sklearn pipelines, classification + regression | Done |
+| [Territory Dashboard](Territory%20Dashboard/) | Analytics app | Streamlit KPI dashboard | Done |
+| [Quantitative Trading](Quantitative%20Trading/) | Valuation | Almgren–Chriss, Markowitz/Black–Litterman, Heston | Notebooks |
+| [Data Science Methods](Data%20Science%20Methods/) | Statistics | Dirichlet process mixtures, double ML, compressed sensing | Notebooks |
+| [AI Engineering](AI%20Engineering/) | GenAI foundations | RAG, multi-agent VCG, LoRA | Notebooks |
+| [Quantum Algorithms](Quantum%20Algorithms/) | Quantum | VQE, QAOA, surface codes, Qiskit/PennyLane starters | Notebooks |
 
-1. **Quantitative Trading** - Optimal execution, portfolio optimization, derivatives pricing
-2. **Data Science** - Bayesian nonparametrics, causal inference, compressed sensing
-3. **AI Engineering** - RAG systems, multi-agent coordination, fine-tuning
-4. **Quantum Computing** - VQE, QAOA, error correction
+Background and ideas: [Research Notes](Research%20Notes/). Roadmap: [ROADMAP.md](ROADMAP.md). Security notes: [SECURITY.md](SECURITY.md).
 
-Each project is **theory-driven**, **production-quality**, and includes full implementations.
-
----
-
-## 📁 Project Structure
-
-```
-├── 00_INDEX_ALL_PROJECTS.md                  # Master project index
-├── 01_RESEARCH_FOUNDATIONS.md                # Deep theory & quotes
-├── README.md                                  # This file
-│
-├── SECTION_1_TRADING/
-│   ├── README.md
-│   ├── 02_Trading_Optimal_Execution.ipynb
-│   ├── 04_Trading_PortfolioOptimization.ipynb
-│   └── 05_Trading_HestonVolatility.ipynb
-│
-├── SECTION_2_DATA_SCIENCE/
-│   ├── README.md
-│   ├── 03_DataScience_BayesianNonparametrics.ipynb
-│   └── [More notebooks - generate with agy]
-│
-├── SECTION_3_AI_ENGINEERING/
-│   ├── README.md
-│   └── [Notebooks to be generated with agy]
-│
-└── SECTION_4_QUANTUM/
-    ├── README.md
-    └── [Notebooks to be generated with agy]
-```
-
----
-
-## 🚀 Quick Start
-
+## Quick start
 ```bash
-# Install dependencies
-pip install numpy scipy pandas matplotlib scikit-learn jupyter
-
-# Run a notebook
-cd SECTION_1_TRADING
-jupyter notebook 02_Trading_Optimal_Execution.ipynb
+git clone https://github.com/Yoyo1505/My_projects.git
+cd My_projects/"F1 Las Vegas Predictor"
+pip install -r requirements.txt && python predict.py
 ```
 
----
-
-## 📊 Status
-
-✅ **Complete**:
-- Section 1: All 3 trading projects (500+ lines)
-- Section 2: 1 data science project (400+ lines)
-- All section READMEs and theory foundations
-
-🔄 **Next (Use agy CLI)**:
-```bash
-agy generate notebook --section 2 --count 2
-agy generate notebook --section 3 --count 3
-agy generate notebook --section 4 --count 3
-```
-
----
-
-## 📚 Projects Overview
-
-| Section | Projects | Status | Time |
-|---------|----------|--------|------|
-| **Trading** | Optimal Execution, Portfolio Opt., Heston | ✅ | 14-19h |
-| **Data Science** | DPM, Causal Inference, Compressed Sensing | 🔄 | 14-19h |
-| **AI Engineering** | RAG, Multi-Agent, LoRA | 🔄 | 14-18h |
-| **Quantum** | VQE, QAOA, Error Correction | 🔄 | 18-24h |
-
-**Total**: ~75-100 hours of rigorous applied mathematics
-
----
-
-## 🎓 Learning Paths
-
-**Finance**: Section 1 → DS → AI  
-**ML/AI**: Section 2 → Section 3 → Trading (bridge)  
-**Quantum**: Section 4 (all) → optional: Trading bridge  
-**Complete**: All sections, all projects
-
----
-
-## 💡 Key Features
-
-✅ Theory-driven with Nobel Prize context  
-✅ Production-quality implementations  
-✅ Complete code + visualizations  
-✅ Reproducible with realistic data  
-✅ Clear extension paths  
-
----
-
-## 📖 Start Here
-
-1. Read `01_RESEARCH_FOUNDATIONS.md` (theory + context)
-2. Pick a section README based on your interests
-3. Run a notebook end-to-end
-4. Explore, modify, experiment
-
----
-
-**Last Updated**: August 2026  
-**Status**: v1.0 core projects complete; expanding with agy CLI
+## Honest results
+The sports models report backtests against real baselines. The NFL model does not beat the betting market and the F1 model's edge over "pole wins" is modest; both READMEs say so.

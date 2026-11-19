@@ -1,5 +1,9 @@
 # SplitWave Support Agent
 
+**Domain:** GenAI / agents · **Role fit:** Applied AI Engineer / Forward Deployed Engineer
+
+> Security: set `OLLAMA_API_KEY` only through the environment and never commit key files. Authorization guardrails on order data are tested in `test_authorization.py`. See [SECURITY.md](../SECURITY.md).
+
 An LLM-powered customer support assistant for SplitWave (Buy Now, Pay Later) shoppers. It handles policy inquiries, order & payment status lookups, and human support escalations while enforcing structural data guardrails.
 
 ---

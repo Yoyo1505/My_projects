@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cashi · Asistente Financiero</title>
+<style>
+  :root {
+    --rojo: #a93226;
+    --rojo-suave: rgba(169,50,38,.10);
+    --gris-fondo: #f4f5f7;
+    --gris-borde: #e1e3e8;
+    --texto: #2b2b2b;
+    --texto-suave: #6b7280;
+    --verde: #145a32;
+    --blanco: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--gris-fondo);
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: var(--blanco);
+    border-bottom: 3px solid rgba(169,50,38,.30);
+    padding: 14px 20px;
+    flex-shrink: 0;
+  }
+  header .kicker {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    color: var(--rojo);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  header h1 {
+    margin: 2px 0 0 0;
+    font-size: 1.3rem;
+  }
+  header .estado {
+    float: right;
+    font-size: .78rem;
+    color: var(--texto-suave);
+    margin-top: 2px;
+  }
+  header .estado.ok::before { content: "● "; color: var(--verde); }
+  header .estado.mal::before { content: "● "; color: var(--rojo); }
+
+  #chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 20px 0 20px;
+    flex-shrink: 0;
+  }
+  .chip {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .chip:hover { background: var(--rojo-suave); border-color: var(--rojo); }
+
+  #historial {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .turno { max-width: 900px; }
+  .pregunta {
+    display: inline-block;
+    background: var(--rojo);
+    color: var(--blanco);
+    padding: 8px 14px;
+    border-radius: 14px 14px 14px 2px;
+    font-size: .9rem;
+  }
+  .respuesta {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 8px;
+  }
+  .respuesta .titulo {
+    font-weight: 700;
+    font-size: .95rem;
+    margin-bottom: 6px;
+  }
+  .respuesta .badge {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--rojo-suave);
+    color: var(--rojo);
+    margin-bottom: 8px;
+  }
+  .respuesta .cuerpo h3 { font-size: 1rem; margin: 10px 0 4px 0; }
+  .respuesta .cuerpo ul { margin: 4px 0; padding-left: 20px; }
+  .respuesta .cuerpo p { margin: 6px 0; line-height: 1.5; }
+  .respuesta .contexto-nota {
+    font-size: .78rem;
+    color: var(--texto-suave);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  table.datos {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    font-size: .82rem;
+  }
+  table.datos th, table.datos td {
+    border: 1px solid var(--gris-borde);
+    padding: 5px 9px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  table.datos th:first-child, table.datos td:first-child { text-align: left; }
+  table.datos th {
+    background: var(--gris-fondo);
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+  }
+  .tabla-wrap { max-height: 340px; overflow: auto; border-radius: 6px; }
+
+  details.linaje {
+    margin-top: 10px;
+    font-size: .78rem;
+  }
+  details.linaje summary {
+    cursor: pointer;
+    color: var(--texto-suave);
+  }
+  details.linaje pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: .74rem;
+  }
+
+  .citas { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .cita {
+    background: var(--gris-fondo);
+    border-left: 3px solid var(--rojo);
+    padding: 8px 12px;
+    font-size: .8rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .cita .archivo { font-weight: 700; color: var(--rojo); }
+  .cita pre { white-space: pre-wrap; margin: 4px 0 0 0; font-size: .76rem; }
+
+  .sugerencias { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .sug-chip {
+    background: var(--rojo-suave);
+    color: var(--rojo);
+    border: 1px solid var(--rojo);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: .78rem;
+    cursor: pointer;
+  }
+  .sug-chip:hover { background: var(--rojo); color: var(--blanco); }
+
+  #barra-input {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding: 14px 20px;
+    background: var(--blanco);
+    border-top: 1px solid var(--gris-borde);
+  }
+  #campo-texto {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    font-size: .92rem;
+  }
+  #campo-texto:focus { outline: none; border-color: var(--rojo); }
+  button#enviar, button#limpiar {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button#enviar { background: var(--rojo); color: var(--blanco); }
+  button#enviar:disabled { background: #c9a3a0; cursor: default; }
+  button#limpiar { background: var(--blanco); color: var(--texto-suave); border: 1px solid var(--gris-borde); }
+
+  .cargando { color: var(--texto-suave); font-size: .85rem; font-style: italic; }
+  .vacio { color: var(--texto-suave); text-align: center; margin-top: 60px; font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="estado" id="estado-conexion">verificando conexión…</span>
+  <div class="kicker">Grupo Elektra · Planeación Financiera</div>
+  <h1>🤖 Cashi · Asistente Financiero</h1>
+</header>
+
+<div id="chips">
+  <span class="chip" data-q="Top CECOs con mayor sobreconsumo vs Plan">📊 Top Desviaciones</span>
+  <span class="chip" data-q="Pareto de sobregasto acumulado">📈 Pareto 80/20</span>
+  <span class="chip" data-q="Anomalias de gasto atipico">⚠️ Anomalías MAD</span>
+  <span class="chip" data-q="Real 2026 vs Real 2025 a semanas iguales">⚖️ Real 2026 vs 2025</span>
+  <span class="chip" data-q="Reglas metodologia radar preventivo y cecos sin match">📖 Reglas Radar</span>
+</div>
+
+<div id="historial">
+  <div class="vacio">Escribe una pregunta financiera o documental para empezar — p.ej. "Gasto de nómina para CECO 1005" o "variación semana 30 vs 31".</div>
+</div>
+
+<div id="barra-input">
+  <input type="text" id="campo-texto" placeholder="Escribe tu consulta financiera o documental…" autocomplete="off">
+  <button id="enviar">Enviar</button>
+  <button id="limpiar">🗑️ Limpiar</button>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Mismo host/puerto donde corre server_api.py. Si esta página se abre
+  // directo desde el disco (file://) en vez de servida por el propio
+  // servidor, ajustar API_BASE manualmente a "http://localhost:8507".
+  const API_BASE = location.origin && location.origin !== "null" ? location.origin : "http://localhost:8507";
+
+  const historial = document.getElementById("historial");
+  const campoTexto = document.getElementById("campo-texto");
+  const btnEnviar = document.getElementById("enviar");
+  const btnLimpiar = document.getElementById("limpiar");
+  const estadoConexion = document.getElementById("estado-conexion");
+
+  let filtrosUltimoTurno = null; // para follow-ups ("¿y por semana?")
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // Markdown MUY simplificado: solo lo que Cashi realmente genera
+  // (### encabezados, **negritas**, líneas "- " como lista, párrafos).
+  // El texto ya viene escapado antes de aplicar estas transformaciones.
+  function mdLiteToHtml(md) {
+    const escapado = escapeHtml(md);
+    const lineas = escapado.split("\n");
+    let html = "";
+    let enLista = false;
+    for (const linea of lineas) {
+      const l = linea.trim();
+      if (l.startsWith("### ")) {
+        if (enLista) { html += "</ul>"; enLista = false; }
+        html += `<h3>${negritas(l.slice(4))}</h3>`;
+      } else if (l.startsWith("- ") || l.startsWith("* ")) {
+        if (!enLista) { html += "<ul>"; enLista = true; }
+        html += `<li>${negritas(l.slice(2))}</li>`;
+      } else if (l === "") {
+        if (enLista) { html += "</ul>"; enLista = false; }
+      } else {
+        if (enLista) { html += "</ul>"; enLista = false; }
+        html += `<p>${negritas(l)}</p>`;
+      }
+    }
+    if (enLista) html += "</ul>";
+    return html;
+  }
+  function negritas(s) {
+    return s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>");
+  }
+
+  function formatearCelda(nombreCol, val) {
+    if (val === null || val === undefined || val === "") return "—";
+    if (typeof val !== "number") return escapeHtml(String(val));
+    const l = String(nombreCol).toLowerCase();
+    if (l.includes("pct") || l.includes("porcentaje")) {
+      return (val >= 0 ? "+" : "") + val.toFixed(1) + "%";
+    }
+    if (l.includes("score") || l === "sem" || l.includes("semana") || l.includes("cantidad")) {
+      return val.toLocaleString("es-MX", { maximumFractionDigits: 2 });
+    }
+    // Heurística: montos grandes se asumen en pesos -> se muestran en MDP,
+    // igual que el resto del dashboard (millones de pesos).
+    if (Math.abs(val) >= 1000) {
+      return (val / 1e6).toLocaleString("es-MX", { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + " MDP";
+    }
+    return val.toLocaleString("es-MX", { maximumFractionDigits: 2 });
+  }
+
+  function renderTabla(filas) {
+    if (!filas || !filas.length) return "";
+    const cols = Object.keys(filas[0]);
+    let html = '<div class="tabla-wrap"><table class="datos"><thead><tr>';
+    for (const c of cols) html += `<th>${escapeHtml(c)}</th>`;
+    html += "</tr></thead><tbody>";
+    for (const fila of filas) {
+      html += "<tr>";
+      for (const c of cols) html += `<td>${formatearCelda(c, fila[c])}</td>`;
+      html += "</tr>";
+    }
+    html += "</tbody></table></div>";
+    return html;
+  }
+
+  function renderCitas(citas) {
+    if (!citas || !citas.length || citas[0].error) return "";
+    let html = '<div class="citas">';
+    for (const c of citas) {
+      html += `<div class="cita">
+        <span class="archivo">${escapeHtml(c.file)}</span>
+        <span> — ${escapeHtml(c.heading || "")} (score ${escapeHtml(c.score)})</span>
+        <pre>${escapeHtml(c.snippet || "")}</pre>
+      </div>`;
+    }
+    html += "</div>";
+    return html;
+  }
+
+  function renderSugerencias(sugs) {
+    if (!sugs || !sugs.length) return "";
+    let html = '<div class="sugerencias">';
+    for (const [etiqueta, valor] of sugs) {
+      html += `<span class="sug-chip" data-q="${escapeHtml(valor)}">${escapeHtml(etiqueta)}: ${escapeHtml(valor)}</span>`;
+    }
+    html += "</div>";
+    return html;
+  }
+
+  function renderLinaje(sql) {
+    if (!sql) return "";
+    return `<details class="linaje">
+      <summary>🔍 Linaje SQL (${escapeHtml(sql.tiempo_ms)} ms · ${escapeHtml(sql.filas_procesadas)} filas)</summary>
+      <pre>${escapeHtml(sql.sql_ejecutado || "")}</pre>
+    </details>`;
+  }
+
+  function agregarTurno(pregunta, res) {
+    const vacio = historial.querySelector(".vacio");
+    if (vacio) vacio.remove();
+
+    const div = document.createElement("div");
+    div.className = "turno";
+
+    const tipo = res.tipo_respuesta || "—";
+
+    div.innerHTML = `
+      <div class="pregunta">${escapeHtml(pregunta)}</div>
+      <div class="respuesta">
+        <span class="badge">${escapeHtml(tipo)}</span>
+        <div class="titulo">${escapeHtml(res.titulo || "")}</div>
+        <div class="cuerpo">${mdLiteToHtml(res.respuesta_ejecutiva || "")}</div>
+        ${renderTabla(res.tabla)}
+        ${renderCitas(res.citas_documentales)}
+        ${renderSugerencias(res.sugerencias_entidades)}
+        ${renderLinaje(res.sql_linaje)}
+      </div>
+    `;
+    historial.appendChild(div);
+    historial.scrollTop = historial.scrollHeight;
+
+    div.querySelectorAll(".sug-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        campoTexto.value = chip.dataset.q;
+        enviarConsulta();
+      });
+    });
+  }
+
+  async function enviarConsulta(textoForzado) {
+    const texto = (textoForzado !== undefined ? textoForzado : campoTexto.value).trim();
+    if (!texto) return;
+
+    campoTexto.value = "";
+    btnEnviar.disabled = true;
+
+    const cargando = document.createElement("div");
+    cargando.className = "cargando";
+    cargando.textContent = "Cashi está analizando la consulta…";
+    historial.appendChild(cargando);
+    historial.scrollTop = historial.scrollHeight;
+
+    try {
+      const resp = await fetch(`${API_BASE}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: texto, mode: "financial", contexto_previo: filtrosUltimoTurno }),
+      });
+      const data = await resp.json();
+      cargando.remove();
+      agregarTurno(texto, data);
+      filtrosUltimoTurno = data.filtros_resueltos || null;
+      marcarConexion(true);
+    } catch (err) {
+      cargando.remove();
+      agregarTurno(texto, {
+        tipo_respuesta: "error",
+        titulo: "Error de conexión",
+        respuesta_ejecutiva: `No se pudo contactar al servidor Cashi (${API_BASE}). ¿Está corriendo \`python rag/server_api.py\`? Detalle: ${err}`,
+      });
+      marcarConexion(false);
+    } finally {
+      btnEnviar.disabled = false;
+      campoTexto.focus();
+    }
+  }
+
+  function marcarConexion(ok) {
+    estadoConexion.textContent = ok ? "conectado" : "sin conexión";
+    estadoConexion.className = "estado " + (ok ? "ok" : "mal");
+  }
+
+  btnEnviar.addEventListener("click", () => enviarConsulta());
+  campoTexto.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") enviarConsulta();
+  });
+  btnLimpiar.addEventListener("click", () => {
+    historial.innerHTML = '<div class="vacio">Escribe una pregunta financiera o documental para empezar.</div>';
+    filtrosUltimoTurno = null;
+  });
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => enviarConsulta(chip.dataset.q));
+  });
+
+  // Chequeo de conexión inicial (silencioso, no agrega turno al historial)
+  fetch(`${API_BASE}/?q=`).then(r => marcarConexion(r.ok)).catch(() => marcarConexion(false));
+
+  campoTexto.focus();
+})();
+</script>
+</body>
+</html>
