@@ -1,15 +1,15 @@
 # Data Science Methods
 
-**Domain:** Statistics / ML theory · **Technique:** Bayesian nonparametrics, causal ML, sparse recovery · **Role fit:** Applied AI Engineer
+**Domain:** Statistics / ML · **Technique:** Bayesian nonparametrics, causal ML, sparse recovery · **Role fit:** Applied AI Engineer
 
-Three from-scratch notebooks on statistical methods that go beyond standard supervised learning.
+Three executed notebooks applying statistical methods to real data. Each ends with Conclusions; numbers and caveats are also in `results.md`.
 
 ## Notebooks
-| Notebook | Problem | Approach |
-|---|---|---|
-| `Bayesian Nonparametrics - Dirichlet Process Mixtures` | Cluster data without fixing the number of clusters | Dirichlet process prior, Chinese restaurant process, Gibbs sampling |
-| `Causal Inference - Double Machine Learning` | Estimate a treatment effect with many confounders | Residualisation with ML nuisance models, Neyman-orthogonal score, comparison with OLS and LASSO |
-| `Compressed Sensing - Sparse Signal Recovery` | Recover a sparse signal from few measurements | L1 minimisation / LASSO, recovery vs. number of measurements |
+| Notebook | Problem | Data | Key result |
+|---|---|---|---|
+| `Bayesian Nonparametrics - Dirichlet Process Mixtures` | Find market regimes without fixing their number | SPY returns 2005 to 2026 (yfinance) | 8 active regimes ordered by volatility (3.7% to 70.4% annualised); BIC on a fixed-K mixture picks 6, so the count is a modelling choice |
+| `Causal Inference - Double Machine Learning` | Effect of median income on house value, adjusting for confounders | California housing (20,640 block groups) | Naive OLS 0.197; DML with boosting 0.0725 (CI 0.067 to 0.078); in a simulation with true effect 0.5, DML bias -0.002 vs naive +0.176 |
+| `Compressed Sensing - Sparse Signal Recovery` | Reconstruct an image from 10% to 40% of its pixels | 128 x 128 crop of a real photograph | L1 recovery (16.9 to 19.6 dB) lost to linear interpolation (17.9 to 21.2 dB): the image is only approximately sparse |
 
 ## Run
 ```bash
@@ -18,7 +18,7 @@ jupyter notebook notebooks/
 ```
 
 ## Stack
-NumPy, SciPy, scikit-learn, pandas, Matplotlib, seaborn, Jupyter.
+NumPy, SciPy, scikit-learn, pandas, statsmodels, yfinance, Matplotlib, Jupyter.
 
 ## Limits & security
-Synthetic data with known ground truth, so results show the methods work, not how they behave on messy real data. No credentials.
+The causal estimate is observational and cannot prove causality; the regime model ignores time ordering; compressed sensing is shown on one image and one basis. Public data only; no credentials.

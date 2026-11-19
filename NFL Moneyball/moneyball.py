@@ -85,6 +85,24 @@ def value_over_replacement(season, top=10):
     return pd.concat(out).sort_values("vorp", ascending=False).head(top)
 
 
+def contracts() -> pd.DataFrame:
+    """nflverse/OverTheCap historical contracts (signings through 2022)."""
+    return load(f"{REL}/contracts/historical_contracts.csv.gz", "contracts.csv")
+
+
+def value_vs_salary(season=2022, min_touches=100):
+    """VORP per player joined with the APY of the contract in force that season."""
+    v = value_over_replacement(season, top=10_000)
+    c = contracts()
+    c = c[(c.year_signed <= season) & (c.year_signed + c.years > season)].dropna(subset=["apy"])
+    c = c.sort_values("year_signed").drop_duplicates(["player", "position"], keep="last")
+    d = v.merge(c[["player", "position", "apy", "draft_round", "draft_overall"]],
+                left_on=["player_display_name", "position"], right_on=["player", "position"], how="inner")
+    d["apy_m"] = d.apy / 1e6
+    d["vorp_per_m"] = d.vorp / d.apy_m.clip(lower=0.5)
+    return d[d.touches >= min_touches].drop(columns="player")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--first", type=int, default=2015); ap.add_argument("--last", type=int, default=2026)
     a = ap.parse_args()

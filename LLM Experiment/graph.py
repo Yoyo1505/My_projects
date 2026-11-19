@@ -28,8 +28,7 @@ replaced the original submission's single flat tool-calling loop.
 Each plane only talks to the plane below it -- router.py and verifier.py
 don't know about each other, agent.py doesn't import either. That one-way
 dependency is what makes this a graph instead of one big function: any node
-can be swapped (e.g. verifier.py rebuilt by Grok Build CLI, see
-PROMPTS_ITERATION_2.md) without the others needing to change.
+can be swapped without the others needing to change.
 """
 
 from typing import Dict

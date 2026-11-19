@@ -23,6 +23,15 @@ Local **Retrieval-Augmented Generation** for financial/code knowledge: indexing,
 
 ---
 
+## Executed demo and verification
+[`Cashi RAG Demo.ipynb`](Cashi%20RAG%20Demo.ipynb) runs the engine on the synthetic data with outputs saved:
+- Answers are computed from aggregates and checked against an independent pandas calculation (payroll for Direccion Norte, week 38; global variance +3.0%): they match.
+- In-process latency over 30 queries: median 30 ms, p95 53 ms.
+- Known bug found by the verification: "division centro" / "division sur" are not resolved as filters and the query silently falls back to the account-group total (the `filtros_interpretados` field exposes it). Fix: refuse or ask for clarification when a recognised dimension word is unresolved.
+- Definitional questions ("como se calcula el sobregasto") are answered with a generic variance table; a documentation route is needed.
+
+Live demo: https://yoyo1505.github.io/My_projects/cashi/ (static, in-browser search over the project's own code and docs; see `../docs/README.md`).
+
 ## Reproducible demo
 
 ```powershell
