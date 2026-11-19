@@ -1,0 +1,22 @@
+{
+  "descripcion": "Conjunto de prueba NUEVO (2026-10-08, iteración 5). Escrito antes de cambiar el modelo de esa iteración. Mismo formato que gold_consultas.json. Solo para medir.",
+  "casos": [
+    {"q": "puebla", "dims": ["territorio"], "buscar": "puebla"},
+    {"q": "metro sur", "dims": ["territorio"], "buscar": "metro sur"},
+    {"q": "metro poniente", "dims": ["territorio"], "buscar": "metro poniente"},
+    {"q": "san luis", "dims": ["territorio"], "buscar": "san luis"},
+    {"q": "papeleria y articulos de escritorio", "dims": ["agrupador_reales", "cuenta"], "buscar": "escritorio", "ambigua": true},
+    {"q": "consultoria por tecnologia y proyectos", "dims": ["agrupador_reales"], "buscar": "consultoria por tecnologia"},
+    {"q": "mantenimiento de edificio y local", "dims": ["agrupador_reales", "cuenta"], "buscar": "edificio y local", "ambigua": true},
+    {"q": "herramientas y utiles", "dims": ["agrupador_reales", "cuenta"], "buscar": "herramientas", "ambigua": true},
+    {"q": "accesorios de computacion", "dims": ["agrupador_reales", "cuenta"], "buscar": "accesorios de computacion", "ambigua": true},
+    {"q": "reparacion de mercancia", "dims": ["agrupador_reales", "cuenta"], "buscar": "reparacion de mercancia", "ambigua": true},
+    {"q": "envio de paqueteria", "dims": ["agrupador_reales", "cuenta"], "buscar": "paqueteria", "ambigua": true},
+    {"q": "honorarios por servicios profesionales", "dims": ["agrupador_reales"], "buscar": "servicios profesionales"},
+    {"q": "gracias por la ayuda", "dims": [], "buscar": ""},
+    {"q": "que clima hace hoy", "dims": [], "buscar": ""},
+    {"q": "necesito un reporte bonito", "dims": [], "buscar": ""},
+    {"q": "que opinas de esto", "dims": [], "buscar": ""},
+    {"q": "todo bien", "dims": [], "buscar": ""}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "_nota": "Prueba del clasificador. Frases NO usadas en ejemplos.json. No ajustar los ejemplos para hacer pasar estas frases; si fallan, se agregan como ejemplos nuevos solo después de medir.",
+  "casos": [
+    {"q": "dime que cuenta se ahorro mas frente al plan", "intencion": "variacion_ranking"},
+    {"q": "los 4 territorios con mayor sobregasto", "intencion": "variacion_ranking"},
+    {"q": "cuales pdv estan por debajo del plan", "intencion": "variacion_ranking"},
+    {"q": "cuanto llevamos por arriba del presupuesto en la division sur", "intencion": "variacion_total"},
+    {"q": "cuanto ahorro hubo vs año anterior", "intencion": "variacion_total"},
+    {"q": "cuanto nos desviamos del plan en gasto de luz", "intencion": "variacion_total"},
+    {"q": "que ceco gasta mas en renta", "intencion": "gasto_ranking"},
+    {"q": "las cuentas que mas dinero consumen", "intencion": "gasto_ranking"},
+    {"q": "muestrame el gasto por zona", "intencion": "desglose_dimension"},
+    {"q": "desglose del gasto por grupo de cuentas", "intencion": "desglose_dimension"},
+    {"q": "que divisiones componen la direccion", "intencion": "estructura"},
+    {"q": "cuantos cecos tiene la division centro", "intencion": "estructura"},
+    {"q": "hay algun grupo que haya subido mucho esta semana", "intencion": "alertas"},
+    {"q": "que alertas tengo por sobregasto", "intencion": "alertas"},
+    {"q": "como va el gasto mes a mes", "intencion": "tendencia"},
+    {"q": "muestrame la evolucion semanal del gasto", "intencion": "tendencia"},
+    {"q": "buenas tardes", "intencion": "conversacional"},
+    {"q": "muchas gracias por la ayuda", "intencion": "conversacional"}
+  ]
+}

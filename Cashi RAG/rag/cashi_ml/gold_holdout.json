@@ -1,0 +1,23 @@
+{
+  "descripcion": "Conjunto de PRUEBA NO VISTO durante el ajuste: no se usa para elegir configuración ni para cambiar etiquetas. Se mide una sola vez por ronda de entrenamiento. Mismo formato que gold_consultas.json.",
+  "casos": [
+    {"q": "metro oriente", "dims": ["territorio"], "buscar": "metro oriente"},
+    {"q": "jalisco", "dims": ["territorio"], "buscar": "jalisco"},
+    {"q": "tabasco", "dims": ["territorio"], "buscar": "tabasco"},
+    {"q": "bajio", "dims": ["territorio"], "buscar": "bajio"},
+    {"q": "sinaloa", "dims": ["territorio"], "buscar": "sinaloa"},
+    {"q": "yucatan", "dims": ["territorio"], "buscar": "yucatan"},
+    {"q": "baja california", "dims": ["territorio"], "buscar": "baja california"},
+    {"q": "queretaro", "dims": ["territorio"], "buscar": "queretaro"},
+    {"q": "chiapas", "dims": ["territorio"], "buscar": "chiapas"},
+    {"q": "oaxaca", "dims": ["territorio"], "buscar": "oaxaca"},
+    {"q": "division centro", "dims": ["division"], "buscar": "centro"},
+    {"q": "corporativo", "dims": ["grupo_cuentas", "cuenta", "division", "territorio"], "buscar": "corporativo"},
+    {"q": "cuanto llevo gastado de comedor", "dims": ["agrupador_reales", "cuenta"], "buscar": "comedor", "ambigua": true},
+    {"q": "rentas y seguros", "dims": ["grupo_cuentas", "cuenta"], "buscar": "rentas y seguros"},
+    {"q": "el gasto en uniformes de la division norte", "dims": ["agrupador_reales", "cuenta"], "buscar": "uniformes", "ambigua": true},
+    {"q": "cuanto es el total del gasto en la semana 30", "dims": [], "buscar": ""},
+    {"q": "muestrame el pareto de los cecos", "dims": [], "buscar": ""},
+    {"q": "buenos dias", "dims": [], "buscar": ""}
+  ]
+}
