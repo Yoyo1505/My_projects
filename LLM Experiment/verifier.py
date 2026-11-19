@@ -12,7 +12,7 @@ failure modes* (README.md "Honestly Unfinished": v01 date format, v02 missed
 policy phrasing, v09 escalation flakiness) at zero added cost. This is itself
 a decision worth defending the same way DECISIONS.md #1/#3 are: the trade is
 "catches known-shaped errors for free" vs. "a second model could catch
-*novel* phrasing problems this can't" -- see PROMPTS_ITERATION_2.md.
+*novel* phrasing problems this can't" -- see DECISIONS.md.
 
 Three independent passes, each a no-op when it finds nothing to fix:
   1. _enforce_escalation_phrases -- route=="escalate" answers must literally
